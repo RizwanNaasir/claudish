@@ -17,8 +17,8 @@ import programasweights as paw
 to_claudish = paw.function("ca9d5165b6c8e6615529")
 to_english = paw.function("e469f61ccab2699fbd51")
 
-print(to_claudish("Do not launch until the tests pass."))
-print(to_english("Green is the gate, not a suggestion."))
+print(to_claudish("Only owners can merge."))
+print(to_english("The honest shape is asymmetric: the data is correct; the format is hard to read. Correctness landed; legibility did not."))
 ```
 
 The programs download once and then run locally. Pass no `max_tokens`; PAW
@@ -27,8 +27,8 @@ stops naturally at EOS.
 For a small command-line wrapper:
 
 ```bash
-python translate.py to-claudish "The export succeeded, but the upload has not started."
-python translate.py to-english "The export landed; the upload has not started."
+python translate.py to-claudish "The release can go out after Alice approves the final report."
+python translate.py to-english "Here’s where I’d hold the line: do not launch until the tests pass. Green is the gate, not a suggestion."
 ```
 
 ## Specs
