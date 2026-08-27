@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "title": "The Claudish–English Dictionary",
   "description": "A field guide to the vocabulary, constructions, and reassurances that make ordinary technical prose sound recognizably Claudish.",
   "editorial_note": "These are ordinary English and technical terms, not words invented by Claude. Claudish emerges from their unusual frequency, combinations, metaphors, and sentence structures.",
@@ -54,91 +54,100 @@
     "byte-identical",
     "youre-right-to-push-back",
     "cleanly",
-    "genuinely",
-    "smoking-gun",
-    "binding"
+    "freeze-the-binding"
   ],
+  "phrase_guide_title": "How Claudish combines words",
+  "phrase_guide_intro": "Claudish often combines ordinary words in predictable ways. Once you recognize these patterns, you can translate long phrases one piece at a time.",
   "phrase_guide": [
     {
       "id": "x-gated",
       "pattern": "X-gated",
-      "explanation": "The word before -gated names the authority or check that must allow progress.",
-      "example": {
-        "claudish": "owner-gated / quality-gated",
-        "english": "requires owner approval / must pass a quality check"
-      }
+      "plain_english": "X must happen before work can continue.",
+      "explanation": "The word before -gated names the person, approval, or check that is holding things up.",
+      "examples": [
+        {
+          "claudish": "owner-gated",
+          "english": "waiting for the owner’s approval"
+        },
+        {
+          "claudish": "quality-gated",
+          "english": "blocked until the quality check passes"
+        }
+      ]
     },
     {
       "id": "x-shaped",
       "pattern": "X-shaped",
-      "explanation": "Something resembles X in structure, format, or behavior; the exact relationship comes from context.",
-      "example": {
-        "claudish": "credential-shaped / report-shaped",
-        "english": "looks like a credential / organized like a report"
-      }
+      "plain_english": "It looks or behaves like X, but may not actually be X.",
+      "explanation": "The resemblance may be in its appearance, organization, format, or behavior.",
+      "examples": [
+        {
+          "claudish": "credential-shaped",
+          "english": "looks like a credential, but may not be valid"
+        },
+        {
+          "claudish": "report-shaped",
+          "english": "organized like a report"
+        }
+      ]
     },
     {
       "id": "metaphor-stacking",
       "pattern": "metaphor stacking",
-      "explanation": "Several structural metaphors are compressed into one phrase. Decode each layer separately.",
-      "example": {
-        "claudish": "the load-bearing spine",
-        "english": "the essential central structure"
-      }
+      "plain_english": "Several metaphors packed into one phrase.",
+      "explanation": "Translate each metaphor separately, then combine their meanings.",
+      "examples": [
+        {
+          "claudish": "the load-bearing spine",
+          "english": "the central part that everything depends on"
+        }
+      ]
     },
     {
       "id": "contrastive-reveal",
       "pattern": "not X, but Y / X, not Y",
-      "explanation": "One framing is rejected before another is asserted. Keep the rejected framing when the exclusion changes the meaning.",
-      "example": {
-        "claudish": "This isn't a cache problem; it's an ownership problem.",
-        "english": "The ownership rules caused the problem, not the cache."
-      }
+      "plain_english": "Y is the real explanation; X is being ruled out.",
+      "explanation": "Keep both parts: Claude is correcting how the problem should be understood.",
+      "examples": [
+        {
+          "claudish": "This isn’t a cache problem; it’s an ownership problem.",
+          "english": "The ownership rules caused the problem, not the cache."
+        }
+      ]
     },
     {
       "id": "honest-shape-restatement",
       "pattern": "the honest shape is…",
-      "explanation": "The phrase usually introduces a plainer statement of the actual situation. Decode the clause after is and drop the candor frame.",
-      "example": {
-        "claudish": "The honest shape is asymmetric: reads work; writes do not.",
-        "english": "Reads work, but writes do not."
-      }
+      "plain_english": "Here is what is actually true.",
+      "explanation": "Claude often puts this phrase before a blunt limitation. Drop the introduction and translate what comes after it.",
+      "examples": [
+        {
+          "claudish": "The honest shape is asymmetric: reads work; writes do not.",
+          "english": "Reads work, but writes do not."
+        }
+      ]
     }
   ],
   "entries": [
     {
       "slug": "anchored",
       "term": "anchored",
-      "plain_english": "tied to a fixed reference",
-      "explanation": "A comparison or decision is described as physically attached to the thing that controls it.",
+      "plain_english": "based on a specific reference point",
+      "explanation": "Claude uses anchored when a comparison, decision, or value is based on something fixed. If a comparison is anchored to a release, that release is the version everything else is compared against.",
       "category": "word",
       "aliases": [
         "anchor"
       ],
       "example": {
         "claudish": "The comparison is anchored to the signed release.",
-        "english": "The signed release is the reference for the comparison."
-      }
-    },
-    {
-      "slug": "binding",
-      "term": "binding",
-      "plain_english": "an association or assignment between two things",
-      "explanation": "Links a name, setting, target, or handler to what it controls. A binding may later be frozen, but the word itself does not imply permanence.",
-      "category": "word",
-      "aliases": [
-        "bound"
-      ],
-      "example": {
-        "claudish": "Freeze the compiler binding.",
-        "english": "Don't change the selected compiler."
+        "english": "Use the signed release as the version to compare against."
       }
     },
     {
       "slug": "boundary",
       "term": "boundary",
-      "plain_english": "where one component's responsibility ends and another's begins",
-      "explanation": "Claude turns divisions of responsibility into architectural borders: keep the boundary clean, cross the boundary, or name an ownership, trust, or serialization boundary.",
+      "plain_english": "where one part’s job ends and another’s begins",
+      "explanation": "Claude uses boundary for the line between different parts of a system. An ownership boundary separates who is responsible for what; a trust boundary separates parts with different levels of trust; and a serialization boundary is where data is converted for storage or transfer.",
       "category": "word",
       "aliases": [
         "boundaries",
@@ -148,14 +157,14 @@
       ],
       "example": {
         "claudish": "This keeps the ownership boundary clean.",
-        "english": "This avoids mixing the two components' responsibilities."
+        "english": "This keeps each part responsible for its own work."
       }
     },
     {
       "slug": "cadence",
       "term": "cadence",
-      "plain_english": "how often, or on what schedule, something happens",
-      "explanation": "A schedule, but with the polished rhythm of a process that knows where it is going.",
+      "plain_english": "how often something happens",
+      "explanation": "Claude often uses cadence where schedule or frequency would be simpler. A daily cadence means every day; a weekly cadence means every week.",
       "category": "word",
       "aliases": [],
       "example": {
@@ -166,8 +175,8 @@
     {
       "slug": "canonical",
       "term": "canonical",
-      "plain_english": "the version or form treated as authoritative or standard",
-      "explanation": "Depending on context, this can mean an authoritative source, a normalized form, or a preferred representation. A source of truth is the related phrase for the authoritative location or record; these senses are not identical.",
+      "plain_english": "the version everyone should treat as official",
+      "explanation": "If several files, formats, or copies exist, the canonical one is the one everyone should use. A source of truth is similar, but usually means the place where the official information is kept.",
       "category": "word",
       "aliases": [
         "authoritative",
@@ -176,26 +185,26 @@
       ],
       "example": {
         "claudish": "Read from the canonical manifest.",
-        "english": "Read from the manifest treated as authoritative."
+        "english": "Use the official manifest."
       }
     },
     {
       "slug": "contract",
       "term": "contract",
-      "plain_english": "behavior that callers or users rely on",
-      "explanation": "In Claudish, preserve the existing contract often covers informal compatibility expectations, not only a declared schema or formal API contract.",
+      "plain_english": "a promise about how a piece of software will behave",
+      "explanation": "A software contract covers what other code can expect, such as which inputs are accepted and what results are returned. Claude often says preserve the contract even when no formal contract exists; it simply means “don’t break behavior that existing code relies on.”",
       "category": "word",
       "aliases": [],
       "example": {
         "claudish": "The fallback preserves the existing contract.",
-        "english": "The fallback keeps the behavior callers rely on."
+        "english": "The backup behavior won’t break existing code."
       }
     },
     {
       "slug": "drift",
       "term": "drift",
-      "plain_english": "gradual divergence or inconsistency",
-      "explanation": "A mismatch that accumulated over time rather than arriving as one explicit change. Common variants include schema drift, configuration drift, and behavioral drift.",
+      "plain_english": "gradually stop matching over time",
+      "explanation": "Two things drift apart when small changes make them less and less alike. In software, Claude uses drift for files, settings, formats, or behavior that used to match but no longer do.",
       "category": "word",
       "aliases": [
         "drifted",
@@ -205,26 +214,14 @@
       ],
       "example": {
         "claudish": "The generated file has drifted from the schema.",
-        "english": "The generated file no longer matches the schema."
-      }
-    },
-    {
-      "slug": "genuinely",
-      "term": "genuinely",
-      "plain_english": "really or sincerely, often adding emphasis rather than information",
-      "explanation": "A frequent sincerity marker that can make an ordinary judgment sound more considered without making the claim more specific.",
-      "category": "word",
-      "aliases": [],
-      "example": {
-        "claudish": "This is genuinely useful.",
-        "english": "This is useful."
+        "english": "The generated file no longer matches the expected format."
       }
     },
     {
       "slug": "land",
       "term": "land / landed",
-      "plain_english": "merge or integrate a change into the codebase",
-      "explanation": "Landing does not by itself mean deploying, releasing, or shipping to users: a change can land without reaching production.",
+      "plain_english": "merge a code change",
+      "explanation": "A change has landed once it has been added to the codebase. It may still need to be deployed or released before users can see it.",
       "category": "word",
       "aliases": [
         "landed",
@@ -238,54 +235,53 @@
     {
       "slug": "load-bearing",
       "term": "load-bearing",
-      "plain_english": "essential to keeping the system or argument valid",
-      "explanation": "Borrowed from architecture for the assumption, distinction, invariant, or component presented as holding everything else up.",
+      "plain_english": "so important that everything else depends on it",
+      "explanation": "In a building, a load-bearing wall helps hold everything up. Claude applies the same idea to code, rules, assumptions, and even arguments: if the load-bearing part fails or changes, the rest may no longer work.",
       "category": "word",
       "aliases": [
         "load bearing",
         "load-bearing assumption",
         "load-bearing distinction",
-        "load-bearing invariant",
-        "invariant"
+        "load-bearing invariant"
       ],
       "example": {
         "claudish": "The checksum is the load-bearing invariant in this flow.",
-        "english": "This process depends on the checksum remaining unchanged."
+        "english": "This process only works if the checksum stays the same."
       }
     },
     {
       "slug": "provenance",
       "term": "provenance",
-      "plain_english": "where something came from and what happened to it",
-      "explanation": "Tracks origin plus the relevant chain of transformations or custody, not merely the immediate source or current storage location.",
+      "plain_english": "where something came from and what happened to it along the way",
+      "explanation": "For a file or piece of data, provenance is its history: who or what created it, how it was changed, and how it got here. Knowing where it is stored now is not enough.",
       "category": "word",
       "aliases": [
         "lineage"
       ],
       "example": {
         "claudish": "The cache entry lacks provenance.",
-        "english": "We do not know where the cached value came from or how it was produced."
+        "english": "We don’t know where this cached value came from or how it was created."
       }
     },
     {
       "slug": "seam",
       "term": "seam",
-      "plain_english": "a point where components meet or can be separated",
-      "explanation": "Turns an interface into visible stitching, often marking a place that should remain explicit, testable, or replaceable.",
+      "plain_english": "where two parts of a program connect",
+      "explanation": "In clothing, a seam is where two pieces are joined. Claude uses the same word for a connection between parts of a program, especially one that should remain easy to see, test, or replace.",
       "category": "word",
       "aliases": [
         "seams"
       ],
       "example": {
         "claudish": "Keep the parsing seam explicit.",
-        "english": "Keep the parsing interface clear."
+        "english": "Make it clear where the parser connects to the rest of the program."
       }
     },
     {
       "slug": "shape",
       "term": "shape",
-      "plain_english": "structure, scope, format, or overall nature, depending on context",
-      "explanation": "Response shape means format or schema; change shape means scope and structure; same shape means structurally similar; wrong shape means not the expected structure; and shape of the problem means its overall nature.",
+      "plain_english": "how something is organized or what form it takes",
+      "explanation": "Claude uses shape as a catch-all word. Response shape usually means format; change shape means what a change includes and how it is organized; and shape of the problem means what kind of problem it is.",
       "category": "word",
       "aliases": [
         "response shape",
@@ -296,40 +292,40 @@
       ],
       "example": {
         "claudish": "The response has the right shape.",
-        "english": "The response has the expected structure."
+        "english": "The response is formatted correctly."
       }
     },
     {
       "slug": "spine",
       "term": "spine",
-      "plain_english": "the central structure or idea that everything else depends on",
-      "explanation": "A structural metaphor Claude applies to systems, workflows, and arguments, often in the recurring frame “the spine of…”",
+      "plain_english": "the main part that everything else is built around",
+      "explanation": "Like the spine in a body, this part supports and connects the rest. Claude uses spine for the system, process, or central idea that everything else depends on.",
       "category": "word",
       "aliases": [
         "the spine of"
       ],
       "example": {
         "claudish": "The queue is the spine of the deployment flow.",
-        "english": "The deployment process depends on the queue."
+        "english": "The deployment process is built around the queue."
       }
     },
     {
       "slug": "substrate",
       "term": "substrate",
-      "plain_english": "the underlying system or layer that something depends on",
-      "explanation": "A foundation metaphor that can obscure the concrete service, store, or data structure providing the underlying capability.",
+      "plain_english": "the system underneath that makes something work",
+      "explanation": "Claude uses substrate as a broad name for whatever supports a feature behind the scenes. Depending on the context, it may be a database, log, service, or another part of the program.",
       "category": "word",
       "aliases": [],
       "example": {
         "claudish": "The event log is the durability substrate.",
-        "english": "The event log is what makes the data persist."
+        "english": "The event log is what keeps the data from being lost."
       }
     },
     {
       "slug": "surface",
       "term": "surface / surfaced",
-      "plain_english": "discover, expose, or bring to attention",
-      "explanation": "Claude uses both the probe surfaced an issue and an issue surfaced, often blurring who found something and how.",
+      "plain_english": "find or reveal something",
+      "explanation": "Claude uses surface for almost any kind of finding. A check may surface a problem, or the problem may simply surface, without saying clearly who found it or how.",
       "category": "word",
       "aliases": [
         "surfaced",
@@ -337,50 +333,63 @@
         "surfacing"
       ],
       "example": {
-        "claudish": "The probe surfaced a stale token.",
-        "english": "The check found an expired token."
+        "claudish": "The probe surfaced a configuration mismatch.",
+        "english": "The check found that the settings don’t match."
       }
     },
     {
       "slug": "wedged",
       "term": "wedged",
-      "plain_english": "stuck, or causing another process to become stuck",
-      "explanation": "Often used transitively: one stalled component wedges another by preventing it from making progress.",
+      "plain_english": "stuck, or making something else get stuck",
+      "explanation": "Wedged is standard systems slang for a program that cannot continue. Claude also uses wedge as a verb: one stuck part can prevent another part from making progress.",
       "category": "word",
       "aliases": [
         "wedge"
       ],
       "example": {
         "claudish": "A stalled worker can wedge the queue.",
-        "english": "A stalled worker can make the queue get stuck."
+        "english": "A stuck worker can stop the queue from processing new jobs."
       }
     },
     {
       "slug": "blast-radius",
       "term": "blast radius",
-      "plain_english": "how much else could be affected if a change fails",
-      "explanation": "Established SRE and security jargon that becomes Claudish when applied broadly to routine changes and presented as the main measure of risk.",
+      "plain_english": "how many other things could be affected if something goes wrong",
+      "explanation": "In engineering and security, blast radius means the systems, users, or data that a failure could affect. Claude also uses it for ordinary code changes: a narrow blast radius means fewer things could break.",
       "category": "phrase",
-      "aliases": [
-        "blast-radius"
-      ],
+      "aliases": [],
       "example": {
-        "claudish": "This keeps the migration's blast radius narrow.",
-        "english": "This limits what the migration could affect."
+        "claudish": "This keeps the migration’s blast radius narrow.",
+        "english": "If the migration goes wrong, it will affect fewer things."
       }
     },
     {
       "slug": "fail-closed",
       "term": "fail closed",
-      "plain_english": "deny or stop when uncertain",
-      "explanation": "When a check fails, the safe default is refusal rather than permission.",
+      "plain_english": "block an action when a check fails or gives no answer",
+      "explanation": "Fail closed is a standard security term. If a system cannot confirm that an action is safe or allowed, it blocks the action instead of letting it continue.",
       "category": "phrase",
       "aliases": [
         "fails closed"
       ],
       "example": {
         "claudish": "If verification times out, fail closed.",
-        "english": "If verification times out, deny the request."
+        "english": "If the check times out, block the request."
+      }
+    },
+    {
+      "slug": "freeze-the-binding",
+      "term": "freeze the binding",
+      "plain_english": "stop a choice or connection from changing",
+      "explanation": "A binding is what a name or setting currently points to. To freeze it means to keep that choice fixed. In this example, the program must continue using the same compiler.",
+      "category": "phrase",
+      "aliases": [
+        "frozen binding",
+        "bound"
+      ],
+      "example": {
+        "claudish": "Freeze the compiler binding.",
+        "english": "Don’t change which compiler the program uses."
       }
     },
     {
@@ -405,8 +414,8 @@
     {
       "slug": "honest-caveat",
       "term": "one honest caveat",
-      "plain_english": "one important limitation",
-      "explanation": "A candor marker that makes a qualification sound unusually confessional; honest usually adds framing rather than meaning.",
+      "plain_english": "one limitation you should know about",
+      "explanation": "Claude uses this phrase before admitting that something does not fully work. Honest makes the admission sound more candid, but usually does not change its meaning.",
       "category": "phrase",
       "aliases": [
         "honest caveat"
@@ -417,22 +426,10 @@
       }
     },
     {
-      "slug": "smoking-gun",
-      "term": "smoking gun",
-      "plain_english": "evidence that appears to identify the cause or settle the question",
-      "explanation": "A dramatic label for the strongest clue, sometimes used when the evidence is persuasive but not actually conclusive.",
-      "category": "phrase",
-      "aliases": [],
-      "example": {
-        "claudish": "The missing row is the smoking gun.",
-        "english": "The missing row appears to show what caused the failure."
-      }
-    },
-    {
       "slug": "byte-identical",
       "term": "byte-identical",
-      "plain_english": "identical at every byte",
-      "explanation": "The files contain the same byte sequence, a precise equality claim stronger than merely looking alike or matching visible content.",
+      "plain_english": "exactly the same file contents",
+      "explanation": "Two files are byte-identical when every byte matches. They are not merely visually alike; there is no difference anywhere in the files. This is standard technical language, though Claude often uses it when reporting that copied or generated files were verified.",
       "category": "reassurance",
       "aliases": [
         "byte for byte",
@@ -440,42 +437,42 @@
       ],
       "example": {
         "claudish": "Both artifacts are byte-identical.",
-        "english": "The two files contain exactly the same bytes."
+        "english": "The two files are exactly the same."
       }
     },
     {
       "slug": "cleanly",
       "term": "cleanly",
-      "plain_english": "without reported complications",
-      "explanation": "A compact, unqualified all-clear that compresses several possible failure modes without naming the checks.",
+      "plain_english": "without any obvious problems",
+      "explanation": "Claude often adds cleanly to say that a change, migration, or test finished without trouble. It is a vague all-clear: unless Claude names the checks it ran, it may mean only that nothing obviously went wrong.",
       "category": "reassurance",
       "aliases": [
         "clean"
       ],
       "example": {
         "claudish": "The migration landed cleanly.",
-        "english": "The migration was merged without reported problems."
+        "english": "The migration finished without any obvious problems."
       }
     },
     {
       "slug": "coherent",
       "term": "coherent",
-      "plain_english": "internally consistent, though not necessarily correct",
-      "explanation": "A broad reassurance for plans, states, or artifacts that often leaves the exact consistency check unnamed.",
+      "plain_english": "a vague all-clear: nothing seems broken or out of sync",
+      "explanation": "Coherent is normal English. It becomes Claudish when Claude uses it to reassure you that a file, plan, or entire system is okay without saying exactly what it checked. In practice, it often means “nothing looks obviously wrong.”",
       "category": "reassurance",
       "aliases": [
         "coherence"
       ],
       "example": {
-        "claudish": "Both snapshots are coherent.",
-        "english": "Each saved state is internally consistent."
+        "claudish": "Both snapshots are coherent and hash-verified.",
+        "english": "Both saved versions look intact and passed the file-integrity check."
       }
     },
     {
       "slug": "durable-path-forward",
       "term": "durable path forward",
-      "plain_english": "an approach expected to keep working",
-      "explanation": "Promises longevity without specifying the time horizon or failure condition that would make the path durable.",
+      "plain_english": "a solution meant to last",
+      "explanation": "Claude uses durable path forward for a fix or plan that should keep working instead of solving only the immediate problem. The phrase often does not say how long it will last or what could break it.",
       "category": "reassurance",
       "aliases": [
         "durable",
@@ -483,28 +480,28 @@
       ],
       "example": {
         "claudish": "This gives us a durable path forward.",
-        "english": "This approach should keep working."
+        "english": "This gives us a longer-term solution."
       }
     },
     {
       "slug": "thats-not-nothing",
-      "term": "that's not nothing",
-      "plain_english": "that result is meaningful, even if incomplete",
-      "explanation": "A polished understatement used to validate partial progress while acknowledging that it does not finish the job.",
+      "term": "that’s not nothing",
+      "plain_english": "that is a small but real success",
+      "explanation": "Claude says this when a result is worth recognizing even though it does not solve the whole problem. It usually means “this helps, but there is still more work to do.”",
       "category": "reassurance",
       "aliases": [
         "that is not nothing"
       ],
       "example": {
-        "claudish": "The probe found one valid lead. That's not nothing.",
-        "english": "The one valid lead is meaningful, although the investigation is incomplete."
+        "claudish": "The probe found one valid lead. That’s not nothing.",
+        "english": "The check found one useful lead. That helps, but we haven’t solved the problem."
       }
     },
     {
       "slug": "hard-x",
       "term": "hard X",
-      "plain_english": "a strict or non-negotiable constraint",
-      "explanation": "Claude adds hard to gate, boundary, constraint, or stop as a productive intensifier. The nouns remain different; hard marks each one as actually enforced.",
+      "plain_english": "a rule or limit that cannot be ignored",
+      "explanation": "Claude adds hard to words such as gate, boundary, constraint, and stop to show that they are strictly enforced. A hard stop means work must stop; a hard boundary must not be crossed.",
       "category": "construction",
       "aliases": [
         "hard gate",
@@ -514,26 +511,26 @@
       ],
       "example": {
         "claudish": "A signature mismatch is a hard stop.",
-        "english": "Stop if the signatures do not match."
+        "english": "Stop if the signatures don’t match."
       }
     },
     {
       "slug": "honest-shape",
       "term": "the honest shape",
-      "plain_english": "the actual situation, stated candidly",
-      "explanation": "Combines a candor marker with Claude's flexible shape abstraction, often before an asymmetry, caveat, or constraint.",
+      "plain_english": "the reality, without dressing it up",
+      "explanation": "Claude often uses the honest shape before giving a blunt summary, especially when something only partly works or has an important limitation. It usually means “here’s the real situation.”",
       "category": "construction",
       "aliases": [],
       "example": {
         "claudish": "The honest shape is asymmetric: reads work; writes do not.",
-        "english": "Reads work, but writes do not."
+        "english": "Reads work, but writes don’t."
       }
     },
     {
       "slug": "thread-wire-plumb-through",
       "term": "thread / wire / plumb through",
-      "plain_english": "pass data, configuration, or callbacks across several layers",
-      "explanation": "Treats software as physical infrastructure: values are threaded end-to-end, plumbing carries them through, and completed connections are fully wired.",
+      "plain_english": "pass something through all the parts of a program that need it",
+      "explanation": "Claude uses thread, wire, and plumb when software pieces need to be connected. If a setting is wired through end to end, every relevant part of the program now receives it.",
       "category": "construction",
       "aliases": [
         "threaded end-to-end",
@@ -543,22 +540,22 @@
         "wiring"
       ],
       "example": {
-        "claudish": "The value is threaded end-to-end through every layer.",
-        "english": "The value is passed through every layer."
+        "claudish": "The timeout is threaded end-to-end through every layer.",
+        "english": "Every part of the program now receives the timeout setting."
       }
     },
     {
       "slug": "youre-right-to-push-back",
-      "term": "you're right to push back",
-      "plain_english": "your correction or objection is valid",
-      "explanation": "A recurring validation formula that acknowledges a challenge before conceding or revising the point.",
+      "term": "you’re right to push back",
+      "plain_english": "you were right to question or correct me",
+      "explanation": "Claude often uses this phrase after a user challenges something it said. It formally acknowledges the objection before revising its answer, though it usually means little more than “you’re right.”",
       "category": "construction",
       "aliases": [
         "you are right to push back"
       ],
       "example": {
-        "claudish": "You're right to push back—the cache isn't authoritative.",
-        "english": "You're correct: the cache isn't authoritative."
+        "claudish": "You’re right to push back—the cache isn’t authoritative.",
+        "english": "You’re right—the cache isn’t the official source."
       }
     }
   ],

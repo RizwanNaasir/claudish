@@ -29,7 +29,13 @@ REQUIRED_SPECIMEN_FIELDS = {
     "source_id",
 }
 REQUIRED_SOURCE_FIELDS = {"id", "title", "url", "kind", "note"}
-REQUIRED_PHRASE_GUIDE_FIELDS = {"id", "pattern", "explanation", "example"}
+REQUIRED_PHRASE_GUIDE_FIELDS = {
+    "id",
+    "pattern",
+    "plain_english",
+    "explanation",
+    "examples",
+}
 
 
 def require(condition: bool, message: str) -> None:
@@ -44,8 +50,14 @@ def require_nonempty_string(value: Any, field: str) -> None:
 def validate() -> dict[str, int]:
     data = json.loads(DATA_PATH.read_text(encoding="utf-8"))
 
-    require(data.get("schema_version") == 1, "schema_version must be 1")
-    for field in ("title", "description", "editorial_note"):
+    require(data.get("schema_version") == 2, "schema_version must be 2")
+    for field in (
+        "title",
+        "description",
+        "editorial_note",
+        "phrase_guide_title",
+        "phrase_guide_intro",
+    ):
         require_nonempty_string(data.get(field), field)
 
     categories = data.get("categories")
@@ -87,23 +99,29 @@ def validate() -> dict[str, int]:
             set(phrase) == REQUIRED_PHRASE_GUIDE_FIELDS,
             f"{prefix} has missing or unexpected fields",
         )
-        for field in ("id", "pattern", "explanation"):
+        for field in ("id", "pattern", "plain_english", "explanation"):
             require_nonempty_string(phrase.get(field), f"{prefix}.{field}")
         require(
             bool(SLUG_PATTERN.fullmatch(phrase["id"])),
             f"{prefix}.id is invalid: {phrase['id']!r}",
         )
-        example = phrase["example"]
+        examples = phrase["examples"]
         require(
-            isinstance(example, dict) and set(example) == {"claudish", "english"},
-            f"{prefix}.example must contain exactly claudish and english",
+            isinstance(examples, list) and examples,
+            f"{prefix}.examples must be a non-empty list",
         )
-        require_nonempty_string(example["claudish"], f"{prefix}.example.claudish")
-        require_nonempty_string(example["english"], f"{prefix}.example.english")
-        require(
-            example["claudish"] != example["english"],
-            f"{prefix} example must provide a real translation",
-        )
+        for example_index, example in enumerate(examples):
+            example_prefix = f"{prefix}.examples[{example_index}]"
+            require(
+                isinstance(example, dict) and set(example) == {"claudish", "english"},
+                f"{example_prefix} must contain exactly claudish and english",
+            )
+            require_nonempty_string(example["claudish"], f"{example_prefix}.claudish")
+            require_nonempty_string(example["english"], f"{example_prefix}.english")
+            require(
+                example["claudish"] != example["english"],
+                f"{example_prefix} must provide a real translation",
+            )
         phrase_ids.append(phrase["id"])
     require(len(phrase_ids) == len(set(phrase_ids)), "phrase guide ids must be unique")
 
