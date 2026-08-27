@@ -386,8 +386,8 @@
     {
       "slug": "gated-on",
       "term": "gated on",
-      "plain_english": "cannot proceed until, or requires the named authority or check",
-      "explanation": "A is gated on B makes B a prerequisite. Owner-gated, approval-gated, and quality-gated compress the controlling authority or check into the same productive gate metaphor.",
+      "plain_english": "blocked until a requirement is met",
+      "explanation": "If A is gated on B, A has to wait for B. Claude also uses phrases such as owner-gated, approval-gated, and quality-gated to say what must happen before work can continue.",
       "category": "phrase",
       "aliases": [
         "gate",
@@ -399,7 +399,7 @@
       ],
       "example": {
         "claudish": "Deployment is gated on CI.",
-        "english": "We can't deploy until CI passes."
+        "english": "We can’t deploy until the automated checks pass."
       }
     },
     {
