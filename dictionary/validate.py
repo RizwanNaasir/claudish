@@ -59,16 +59,19 @@ def validate() -> dict[str, int]:
         category_ids.append(category["id"])
     require(len(category_ids) == len(set(category_ids)), "category ids must be unique")
 
-    launch_shortlist = data.get("launch_shortlist")
+    featured_slugs = data.get("featured_slugs")
     require(
-        isinstance(launch_shortlist, list)
-        and len(launch_shortlist) == 8
-        and all(isinstance(term, str) and term.strip() for term in launch_shortlist),
-        "launch_shortlist must contain exactly eight non-empty strings",
+        isinstance(featured_slugs, list)
+        and len(featured_slugs) == 8
+        and all(
+            isinstance(slug, str) and bool(SLUG_PATTERN.fullmatch(slug))
+            for slug in featured_slugs
+        ),
+        "featured_slugs must contain exactly eight valid slugs",
     )
     require(
-        len(launch_shortlist) == len(set(launch_shortlist)),
-        "launch_shortlist terms must be unique",
+        len(featured_slugs) == len(set(featured_slugs)),
+        "featured_slugs must be unique",
     )
 
     phrase_guide = data.get("phrase_guide")
@@ -148,6 +151,10 @@ def validate() -> dict[str, int]:
 
     require(len(slugs) == len(set(slugs)), "entry slugs must be unique")
     require(len(normalized_terms) == len(set(normalized_terms)), "entry terms must be unique")
+    require(
+        set(featured_slugs).issubset(slugs),
+        "featured_slugs must reference existing entries",
+    )
 
     sources = data.get("sources")
     require(isinstance(sources, list) and sources, "sources must be a non-empty list")

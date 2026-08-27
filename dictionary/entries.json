@@ -25,15 +25,15 @@
       "description": "Sentence shapes that make the dialect recognizable beyond vocabulary."
     }
   ],
-  "launch_shortlist": [
+  "featured_slugs": [
+    "provenance",
+    "gated-on",
     "load-bearing",
-    "shape",
-    "blast radius",
-    "spine",
-    "gated",
-    "seam",
-    "smoking gun",
-    "land / landed"
+    "land",
+    "surface",
+    "honest-shape",
+    "cadence",
+    "canonical"
   ],
   "phrase_guide": [
     {
@@ -94,7 +94,7 @@
       ],
       "example": {
         "claudish": "The comparison is anchored to the signed release.",
-        "english": "The comparison uses the signed release as its fixed reference."
+        "english": "The signed release is the reference for the comparison."
       }
     },
     {
@@ -108,7 +108,7 @@
       ],
       "example": {
         "claudish": "Freeze the compiler binding.",
-        "english": "Keep the compiler assignment fixed."
+        "english": "Don't change the selected compiler."
       }
     },
     {
