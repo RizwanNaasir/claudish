@@ -1,0 +1,75 @@
+name: Suggest a dictionary term
+description: Propose a Claudish word, phrase, reassurance, or construction
+title: "[Dictionary] "
+labels:
+  - dictionary
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping expand the Claudish–English Dictionary. Ordinary technical terms are welcome when their frequency, combination, or sentence structure is recognizably Claudish.
+
+  - type: input
+    id: term
+    attributes:
+      label: Claudish term or construction
+      placeholder: "gated on"
+    validations:
+      required: true
+
+  - type: input
+    id: plain_english
+    attributes:
+      label: Plain English
+      description: Translate it as directly as possible.
+      placeholder: "cannot proceed until"
+    validations:
+      required: true
+
+  - type: textarea
+    id: explanation
+    attributes:
+      label: Why it belongs
+      description: What makes this usage feel recognizably Claudish?
+      placeholder: "A prerequisite becomes a gate that everything downstream waits behind."
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example and translation
+      description: Include one short Claudish sentence and its plain-English translation.
+      placeholder: |
+        Claudish: Deployment is gated on CI.
+        English: We can’t deploy until CI passes.
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Public source (optional)
+      description: If this is a real Claude quotation, link the public transcript, issue, or post that identifies it as model output.
+      placeholder: "https://..."
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Suggested category
+      options:
+        - Word
+        - Phrase
+        - Reassurance
+        - Construction
+        - Not sure
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: provenance
+    attributes:
+      label: Provenance
+      options:
+        - label: I have not presented invented text as a real Claude quotation.
+          required: true
