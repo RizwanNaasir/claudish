@@ -29,6 +29,7 @@ REQUIRED_SPECIMEN_FIELDS = {
     "source_id",
 }
 REQUIRED_SOURCE_FIELDS = {"id", "title", "url", "kind", "note"}
+REQUIRED_PHRASE_GUIDE_FIELDS = {"id", "pattern", "explanation", "example"}
 
 
 def require(condition: bool, message: str) -> None:
@@ -57,6 +58,51 @@ def validate() -> dict[str, int]:
             require_nonempty_string(category.get(field), f"categories[{index}].{field}")
         category_ids.append(category["id"])
     require(len(category_ids) == len(set(category_ids)), "category ids must be unique")
+
+    launch_shortlist = data.get("launch_shortlist")
+    require(
+        isinstance(launch_shortlist, list)
+        and len(launch_shortlist) == 8
+        and all(isinstance(term, str) and term.strip() for term in launch_shortlist),
+        "launch_shortlist must contain exactly eight non-empty strings",
+    )
+    require(
+        len(launch_shortlist) == len(set(launch_shortlist)),
+        "launch_shortlist terms must be unique",
+    )
+
+    phrase_guide = data.get("phrase_guide")
+    require(
+        isinstance(phrase_guide, list) and phrase_guide,
+        "phrase_guide must be a non-empty list",
+    )
+    phrase_ids: list[str] = []
+    for index, phrase in enumerate(phrase_guide):
+        prefix = f"phrase_guide[{index}]"
+        require(isinstance(phrase, dict), f"{prefix} must be an object")
+        require(
+            set(phrase) == REQUIRED_PHRASE_GUIDE_FIELDS,
+            f"{prefix} has missing or unexpected fields",
+        )
+        for field in ("id", "pattern", "explanation"):
+            require_nonempty_string(phrase.get(field), f"{prefix}.{field}")
+        require(
+            bool(SLUG_PATTERN.fullmatch(phrase["id"])),
+            f"{prefix}.id is invalid: {phrase['id']!r}",
+        )
+        example = phrase["example"]
+        require(
+            isinstance(example, dict) and set(example) == {"claudish", "english"},
+            f"{prefix}.example must contain exactly claudish and english",
+        )
+        require_nonempty_string(example["claudish"], f"{prefix}.example.claudish")
+        require_nonempty_string(example["english"], f"{prefix}.example.english")
+        require(
+            example["claudish"] != example["english"],
+            f"{prefix} example must provide a real translation",
+        )
+        phrase_ids.append(phrase["id"])
+    require(len(phrase_ids) == len(set(phrase_ids)), "phrase guide ids must be unique")
 
     entries = data.get("entries")
     require(isinstance(entries, list), "entries must be a list")
@@ -133,6 +179,7 @@ def validate() -> dict[str, int]:
     return {
         "categories": len(categories),
         "entries": len(entries),
+        "phrase_patterns": len(phrase_guide),
         "sources": len(sources),
         "specimens": len(specimens),
     }
@@ -148,6 +195,7 @@ def main() -> int:
     print(
         "Dictionary valid: "
         f"{counts['entries']} entries, "
+        f"{counts['phrase_patterns']} phrase patterns, "
         f"{counts['specimens']} sourced specimens, "
         f"{counts['sources']} sources, "
         f"{counts['categories']} categories."

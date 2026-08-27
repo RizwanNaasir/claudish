@@ -25,6 +25,63 @@
       "description": "Sentence shapes that make the dialect recognizable beyond vocabulary."
     }
   ],
+  "launch_shortlist": [
+    "load-bearing",
+    "shape",
+    "blast radius",
+    "spine",
+    "gated",
+    "seam",
+    "smoking gun",
+    "land / landed"
+  ],
+  "phrase_guide": [
+    {
+      "id": "x-gated",
+      "pattern": "X-gated",
+      "explanation": "The word before -gated names the authority or check that must allow progress.",
+      "example": {
+        "claudish": "owner-gated / quality-gated",
+        "english": "requires owner approval / must pass a quality check"
+      }
+    },
+    {
+      "id": "x-shaped",
+      "pattern": "X-shaped",
+      "explanation": "Something resembles X in structure, format, or behavior; the exact relationship comes from context.",
+      "example": {
+        "claudish": "credential-shaped / report-shaped",
+        "english": "looks like a credential / organized like a report"
+      }
+    },
+    {
+      "id": "metaphor-stacking",
+      "pattern": "metaphor stacking",
+      "explanation": "Several structural metaphors are compressed into one phrase. Decode each layer separately.",
+      "example": {
+        "claudish": "the load-bearing spine",
+        "english": "the essential central structure"
+      }
+    },
+    {
+      "id": "contrastive-reveal",
+      "pattern": "not X, but Y / X, not Y",
+      "explanation": "One framing is rejected before another is asserted. Keep the rejected framing when the exclusion changes the meaning.",
+      "example": {
+        "claudish": "This isn't a cache problem; it's an ownership problem.",
+        "english": "The ownership rules caused the problem, not the cache."
+      }
+    },
+    {
+      "id": "honest-shape-restatement",
+      "pattern": "the honest shape is…",
+      "explanation": "The phrase usually introduces a plainer statement of the actual situation. Decode the clause after is and drop the candor frame.",
+      "example": {
+        "claudish": "The honest shape is asymmetric: reads work; writes do not.",
+        "english": "Reads work, but writes do not."
+      }
+    }
+  ],
   "entries": [
     {
       "slug": "anchored",
@@ -43,8 +100,8 @@
     {
       "slug": "binding",
       "term": "binding",
-      "plain_english": "a fixed connection or assignment",
-      "explanation": "Turns a choice about which thing is connected to which into a durable-sounding noun.",
+      "plain_english": "an association or assignment between two things",
+      "explanation": "Links a name, setting, target, or handler to what it controls. A binding may later be frozen, but the word itself does not imply permanence.",
       "category": "word",
       "aliases": [
         "bound"
@@ -55,37 +112,26 @@
       }
     },
     {
-      "slug": "blocker",
-      "term": "blocker",
-      "plain_english": "something preventing progress",
-      "explanation": "Names the obstacle as a process object, usually while narrowing everything else out of scope.",
-      "category": "word",
-      "aliases": [
-        "blocked"
-      ],
-      "example": {
-        "claudish": "The remaining blocker is authentication.",
-        "english": "Authentication is the only thing preventing progress."
-      }
-    },
-    {
       "slug": "boundary",
       "term": "boundary",
-      "plain_english": "where a responsibility or rule ends",
-      "explanation": "Makes a division of responsibility sound like a clean architectural border.",
+      "plain_english": "where one component's responsibility ends and another's begins",
+      "explanation": "Claude turns divisions of responsibility into architectural borders: keep the boundary clean, cross the boundary, or name an ownership, trust, or serialization boundary.",
       "category": "word",
       "aliases": [
-        "boundaries"
+        "boundaries",
+        "ownership boundary",
+        "trust boundary",
+        "serialization boundary"
       ],
       "example": {
-        "claudish": "That crosses the ownership boundary.",
-        "english": "That belongs to another component."
+        "claudish": "This keeps the ownership boundary clean.",
+        "english": "This avoids mixing the two components' responsibilities."
       }
     },
     {
       "slug": "cadence",
       "term": "cadence",
-      "plain_english": "how often something happens",
+      "plain_english": "how often, or on what schedule, something happens",
       "explanation": "A schedule, but with the polished rhythm of a process that knows where it is going.",
       "category": "word",
       "aliases": [],
@@ -97,34 +143,24 @@
     {
       "slug": "canonical",
       "term": "canonical",
-      "plain_english": "the official version",
-      "explanation": "Identifies the version everyone should treat as authoritative when several copies exist.",
+      "plain_english": "the version or form treated as authoritative or standard",
+      "explanation": "Depending on context, this can mean an authoritative source, a normalized form, or a preferred representation. A source of truth is the related phrase for the authoritative location or record; these senses are not identical.",
       "category": "word",
       "aliases": [
-        "authoritative"
+        "authoritative",
+        "source of truth",
+        "single source of truth"
       ],
       "example": {
         "claudish": "Read from the canonical manifest.",
-        "english": "Read from the official manifest."
-      }
-    },
-    {
-      "slug": "cohort",
-      "term": "cohort",
-      "plain_english": "a group treated together",
-      "explanation": "A group of users, records, or runs after it has acquired experimental formality.",
-      "category": "word",
-      "aliases": [],
-      "example": {
-        "claudish": "This cohort sees the new path.",
-        "english": "This group of users gets the new behavior."
+        "english": "Read from the manifest treated as authoritative."
       }
     },
     {
       "slug": "contract",
       "term": "contract",
-      "plain_english": "what a component promises to accept or do",
-      "explanation": "Describes expected behavior as an agreement between parts of a system.",
+      "plain_english": "behavior that callers or users rely on",
+      "explanation": "In Claudish, preserve the existing contract often covers informal compatibility expectations, not only a declared schema or formal API contract.",
       "category": "word",
       "aliases": [],
       "example": {
@@ -135,11 +171,14 @@
     {
       "slug": "drift",
       "term": "drift",
-      "plain_english": "gradually become inconsistent",
-      "explanation": "A mismatch that arrived over time rather than announcing itself as a single change.",
+      "plain_english": "gradual divergence or inconsistency",
+      "explanation": "A mismatch that accumulated over time rather than arriving as one explicit change. Common variants include schema drift, configuration drift, and behavioral drift.",
       "category": "word",
       "aliases": [
-        "drifted"
+        "drifted",
+        "schema drift",
+        "configuration drift",
+        "behavioral drift"
       ],
       "example": {
         "claudish": "The generated file has drifted from the schema.",
@@ -147,38 +186,22 @@
       }
     },
     {
-      "slug": "handoff",
-      "term": "handoff",
-      "plain_english": "a transfer of data or responsibility",
-      "explanation": "The moment one component stops owning something and another begins.",
+      "slug": "genuinely",
+      "term": "genuinely",
+      "plain_english": "really or sincerely, often adding emphasis rather than information",
+      "explanation": "A frequent sincerity marker that can make an ordinary judgment sound more considered without making the claim more specific.",
       "category": "word",
-      "aliases": [
-        "hand off"
-      ],
+      "aliases": [],
       "example": {
-        "claudish": "The API boundary owns the handoff into storage.",
-        "english": "The API passes the data to storage."
-      }
-    },
-    {
-      "slug": "invariant",
-      "term": "invariant",
-      "plain_english": "something that must remain true",
-      "explanation": "A rule promoted into a property the system is expected never to violate.",
-      "category": "word",
-      "aliases": [
-        "invariants"
-      ],
-      "example": {
-        "claudish": "The invariant is that IDs never change.",
-        "english": "IDs must never change."
+        "claudish": "This is genuinely useful.",
+        "english": "This is useful."
       }
     },
     {
       "slug": "land",
       "term": "land / landed",
-      "plain_english": "merge, ship, or finish",
-      "explanation": "A change does not merely complete; it touches down inside the codebase.",
+      "plain_english": "merge or integrate a change into the codebase",
+      "explanation": "Landing does not by itself mean deploying, releasing, or shipping to users: a change can land without reaching production.",
       "category": "word",
       "aliases": [
         "landed",
@@ -190,27 +213,17 @@
       }
     },
     {
-      "slug": "lifecycle",
-      "term": "lifecycle",
-      "plain_english": "everything from creation through deletion",
-      "explanation": "Wraps a sequence of ordinary stages into one managed process.",
-      "category": "word",
-      "aliases": [
-        "life cycle"
-      ],
-      "example": {
-        "claudish": "Cleanup runs at the end of the artifact lifecycle.",
-        "english": "Cleanup runs when the generated file is deleted."
-      }
-    },
-    {
       "slug": "load-bearing",
       "term": "load-bearing",
-      "plain_english": "essential",
-      "explanation": "Borrowed from architecture to mark the part that supposedly holds the whole argument or system up.",
+      "plain_english": "essential to keeping the system or argument valid",
+      "explanation": "Borrowed from architecture for the assumption, distinction, invariant, or component presented as holding everything else up.",
       "category": "word",
       "aliases": [
-        "load bearing"
+        "load bearing",
+        "load-bearing assumption",
+        "load-bearing distinction",
+        "load-bearing invariant",
+        "invariant"
       ],
       "example": {
         "claudish": "The checksum is the load-bearing invariant in this flow.",
@@ -218,81 +231,24 @@
       }
     },
     {
-      "slug": "materially",
-      "term": "materially",
-      "plain_english": "enough to matter",
-      "explanation": "A significance threshold expressed without having to say where that threshold is.",
-      "category": "word",
-      "aliases": [
-        "material"
-      ],
-      "example": {
-        "claudish": "This does not materially change latency.",
-        "english": "This does not change latency enough to matter."
-      }
-    },
-    {
       "slug": "provenance",
       "term": "provenance",
-      "plain_english": "where something came from and how",
-      "explanation": "The history of a value, file, or claim recast as evidence lineage.",
+      "plain_english": "where something came from and what happened to it",
+      "explanation": "Tracks origin plus the relevant chain of transformations or custody, not merely the immediate source or current storage location.",
       "category": "word",
       "aliases": [
         "lineage"
       ],
       "example": {
         "claudish": "The cache entry lacks provenance.",
-        "english": "We do not know where the cached value came from."
-      }
-    },
-    {
-      "slug": "reconcile",
-      "term": "reconcile",
-      "plain_english": "make two versions agree",
-      "explanation": "Resolve differences while implying both sides deserve a formal accounting.",
-      "category": "word",
-      "aliases": [
-        "reconciliation"
-      ],
-      "example": {
-        "claudish": "Reconcile the two snapshots.",
-        "english": "Make the two saved versions agree."
-      }
-    },
-    {
-      "slug": "reject",
-      "term": "reject",
-      "plain_english": "refuse, discard, or mark invalid",
-      "explanation": "An ordinary refusal stated as a deliberate state transition.",
-      "category": "word",
-      "aliases": [
-        "rejected",
-        "rejection"
-      ],
-      "example": {
-        "claudish": "Reject inputs that cross the boundary.",
-        "english": "Refuse inputs outside the allowed range."
-      }
-    },
-    {
-      "slug": "scoped",
-      "term": "scoped",
-      "plain_english": "deliberately limited",
-      "explanation": "Reassures the reader that a problem or change has been contained to a named area.",
-      "category": "word",
-      "aliases": [
-        "scope"
-      ],
-      "example": {
-        "claudish": "The failure is narrowly scoped to exports.",
-        "english": "Only exports are failing."
+        "english": "We do not know where the cached value came from or how it was produced."
       }
     },
     {
       "slug": "seam",
       "term": "seam",
-      "plain_english": "where two components connect",
-      "explanation": "Turns an interface into visible stitching between system parts.",
+      "plain_english": "a point where components meet or can be separated",
+      "explanation": "Turns an interface into visible stitching, often marking a place that should remain explicit, testable, or replaceable.",
       "category": "word",
       "aliases": [
         "seams"
@@ -305,38 +261,57 @@
     {
       "slug": "shape",
       "term": "shape",
-      "plain_english": "the overall structure or situation",
-      "explanation": "A flexible abstraction for structure, behavior, evidence, or whatever the next colon is about to reveal.",
+      "plain_english": "structure, scope, format, or overall nature, depending on context",
+      "explanation": "Response shape means format or schema; change shape means scope and structure; same shape means structurally similar; wrong shape means not the expected structure; and shape of the problem means its overall nature.",
       "category": "word",
-      "aliases": [],
+      "aliases": [
+        "response shape",
+        "change shape",
+        "same shape",
+        "wrong shape",
+        "shape of the problem"
+      ],
       "example": {
         "claudish": "The response has the right shape.",
         "english": "The response has the expected structure."
       }
     },
     {
-      "slug": "stale",
-      "term": "stale",
-      "plain_english": "out of date",
-      "explanation": "Data that has aged past the point where it should still be trusted.",
+      "slug": "spine",
+      "term": "spine",
+      "plain_english": "the central structure or idea that everything else depends on",
+      "explanation": "A structural metaphor Claude applies to systems, workflows, and arguments, often in the recurring frame “the spine of…”",
       "category": "word",
       "aliases": [
-        "staleness"
+        "the spine of"
       ],
       "example": {
-        "claudish": "That snapshot is stale.",
-        "english": "That saved copy is out of date."
+        "claudish": "The queue is the spine of the deployment flow.",
+        "english": "The deployment process depends on the queue."
+      }
+    },
+    {
+      "slug": "substrate",
+      "term": "substrate",
+      "plain_english": "the underlying system or layer that something depends on",
+      "explanation": "A foundation metaphor that can obscure the concrete service, store, or data structure providing the underlying capability.",
+      "category": "word",
+      "aliases": [],
+      "example": {
+        "claudish": "The event log is the durability substrate.",
+        "english": "The event log is what makes the data persist."
       }
     },
     {
       "slug": "surface",
       "term": "surface / surfaced",
-      "plain_english": "find, reveal, or make visible",
-      "explanation": "Information rises into view instead of simply being found or shown.",
+      "plain_english": "discover, expose, or bring to attention",
+      "explanation": "Claude uses both the probe surfaced an issue and an issue surfaced, often blurring who found something and how.",
       "category": "word",
       "aliases": [
         "surfaced",
-        "surfaces"
+        "surfaces",
+        "surfacing"
       ],
       "example": {
         "claudish": "The probe surfaced a stale token.",
@@ -344,31 +319,31 @@
       }
     },
     {
-      "slug": "verdict",
-      "term": "verdict",
-      "plain_english": "the result or decision",
-      "explanation": "Gives a test result the finality of a courtroom judgment.",
+      "slug": "wedged",
+      "term": "wedged",
+      "plain_english": "stuck, or causing another process to become stuck",
+      "explanation": "Often used transitively: one stalled component wedges another by preventing it from making progress.",
       "category": "word",
       "aliases": [
-        "verdicts"
+        "wedge"
       ],
       "example": {
-        "claudish": "The test output gives us a clean verdict.",
-        "english": "The tests tell us whether it worked."
+        "claudish": "A stalled worker can wedge the queue.",
+        "english": "A stalled worker can make the queue get stuck."
       }
     },
     {
-      "slug": "end-to-end",
-      "term": "end-to-end",
-      "plain_english": "through the entire process",
-      "explanation": "Signals that every stage was included rather than checking one component in isolation.",
+      "slug": "blast-radius",
+      "term": "blast radius",
+      "plain_english": "how much else could be affected if a change fails",
+      "explanation": "Established SRE and security jargon that becomes Claudish when applied broadly to routine changes and presented as the main measure of risk.",
       "category": "phrase",
       "aliases": [
-        "end to end"
+        "blast-radius"
       ],
       "example": {
-        "claudish": "The path is verified end-to-end.",
-        "english": "The entire process has been tested."
+        "claudish": "This keeps the migration's blast radius narrow.",
+        "english": "This limits what the migration could affect."
       }
     },
     {
@@ -388,113 +363,99 @@
     {
       "slug": "gated-on",
       "term": "gated on",
-      "plain_english": "cannot proceed until",
-      "explanation": "A prerequisite becomes a gate that must clear before anything downstream may move.",
+      "plain_english": "cannot proceed until, or requires the named authority or check",
+      "explanation": "A is gated on B makes B a prerequisite. Owner-gated, approval-gated, and quality-gated compress the controlling authority or check into the same productive gate metaphor.",
       "category": "phrase",
       "aliases": [
         "gate",
-        "gating"
+        "gating",
+        "X-gated",
+        "owner-gated",
+        "approval-gated",
+        "quality-gated"
       ],
       "example": {
         "claudish": "Deployment is gated on CI.",
-        "english": "We can’t deploy until CI passes."
+        "english": "We can't deploy until CI passes."
       }
     },
     {
-      "slug": "hard-stop",
-      "term": "hard stop",
-      "plain_english": "a limit that is actually enforced",
-      "explanation": "Adds hardness to distinguish a real prohibition from all the apparently decorative ones.",
+      "slug": "honest-caveat",
+      "term": "one honest caveat",
+      "plain_english": "one important limitation",
+      "explanation": "A candor marker that makes a qualification sound unusually confessional; honest usually adds framing rather than meaning.",
       "category": "phrase",
       "aliases": [
-        "hard boundary",
-        "hard gate",
-        "hard constraint"
+        "honest caveat"
       ],
       "example": {
-        "claudish": "A signature mismatch is a hard stop.",
-        "english": "Stop if the signatures do not match."
+        "claudish": "One honest caveat: rollback works only before cleanup.",
+        "english": "Rollback works only before cleanup."
       }
     },
     {
-      "slug": "source-of-truth",
-      "term": "source of truth",
-      "plain_english": "the authoritative place to check",
-      "explanation": "The one copy that wins when several versions disagree.",
+      "slug": "smoking-gun",
+      "term": "smoking gun",
+      "plain_english": "evidence that appears to identify the cause or settle the question",
+      "explanation": "A dramatic label for the strongest clue, sometimes used when the evidence is persuasive but not actually conclusive.",
       "category": "phrase",
-      "aliases": [
-        "single source of truth"
-      ],
+      "aliases": [],
       "example": {
-        "claudish": "The database is the source of truth.",
-        "english": "Use the database as the authoritative record."
-      }
-    },
-    {
-      "slug": "wire-up",
-      "term": "wire up / wiring",
-      "plain_english": "connect the components",
-      "explanation": "Describes data and callbacks as electrical connections running through the system.",
-      "category": "phrase",
-      "aliases": [
-        "wired",
-        "wiring"
-      ],
-      "example": {
-        "claudish": "Wire the callback through every layer.",
-        "english": "Connect the callback to every component."
+        "claudish": "The missing row is the smoking gun.",
+        "english": "The missing row appears to show what caused the failure."
       }
     },
     {
       "slug": "byte-identical",
-      "term": "byte-identical / hash-verified",
-      "plain_english": "checked to be exactly the same",
-      "explanation": "A reassurance with computational receipts: the files do not merely look alike.",
+      "term": "byte-identical",
+      "plain_english": "identical at every byte",
+      "explanation": "The files contain the same byte sequence, a precise equality claim stronger than merely looking alike or matching visible content.",
       "category": "reassurance",
       "aliases": [
-        "hash verified",
-        "checksum-matched"
+        "byte for byte",
+        "byte-for-byte identical"
       ],
       "example": {
-        "claudish": "Both artifacts are byte-identical and hash-verified.",
-        "english": "The two files are exactly the same."
+        "claudish": "Both artifacts are byte-identical.",
+        "english": "The two files contain exactly the same bytes."
       }
     },
     {
       "slug": "cleanly",
       "term": "cleanly",
-      "plain_english": "without problems or ambiguity",
-      "explanation": "A compact all-clear for work that completed in the preferred shape.",
+      "plain_english": "without reported complications",
+      "explanation": "A compact, unqualified all-clear that compresses several possible failure modes without naming the checks.",
       "category": "reassurance",
       "aliases": [
         "clean"
       ],
       "example": {
         "claudish": "The migration landed cleanly.",
-        "english": "The migration finished without problems."
+        "english": "The migration was merged without reported problems."
       }
     },
     {
       "slug": "coherent",
       "term": "coherent",
-      "plain_english": "internally consistent",
-      "explanation": "Reassures the reader that all the pieces make sense when considered together.",
+      "plain_english": "internally consistent, though not necessarily correct",
+      "explanation": "A broad reassurance for plans, states, or artifacts that often leaves the exact consistency check unnamed.",
       "category": "reassurance",
       "aliases": [
         "coherence"
       ],
       "example": {
         "claudish": "Both snapshots are coherent.",
-        "english": "Both saved copies are internally consistent."
+        "english": "Each saved state is internally consistent."
       }
     },
     {
-      "slug": "durable",
-      "term": "durable",
-      "plain_english": "expected to persist or keep working",
-      "explanation": "Promises a solution is more than a temporary patch without specifying an expiration date.",
+      "slug": "durable-path-forward",
+      "term": "durable path forward",
+      "plain_english": "an approach expected to keep working",
+      "explanation": "Promises longevity without specifying the time horizon or failure condition that would make the path durable.",
       "category": "reassurance",
       "aliases": [
+        "durable",
         "durability"
       ],
       "example": {
@@ -503,95 +464,78 @@
       }
     },
     {
-      "slug": "verified",
-      "term": "verified",
-      "plain_english": "checked",
-      "explanation": "Signals that evidence exists, even when the sentence leaves the exact check offstage.",
+      "slug": "thats-not-nothing",
+      "term": "that's not nothing",
+      "plain_english": "that result is meaningful, even if incomplete",
+      "explanation": "A polished understatement used to validate partial progress while acknowledging that it does not finish the job.",
       "category": "reassurance",
       "aliases": [
-        "validated",
-        "audited"
+        "that is not nothing"
       ],
       "example": {
-        "claudish": "The artifact is verified.",
-        "english": "The generated file has been checked."
+        "claudish": "The probe found one valid lead. That's not nothing.",
+        "english": "The one valid lead is meaningful, although the investigation is incomplete."
       }
     },
     {
-      "slug": "honest-take",
-      "term": "the honest take / honest shape",
-      "plain_english": "the conclusion",
-      "explanation": "Announces candor before presenting an ordinary caveat, status, or judgment.",
+      "slug": "hard-x",
+      "term": "hard X",
+      "plain_english": "a strict or non-negotiable constraint",
+      "explanation": "Claude adds hard to gate, boundary, constraint, or stop as a productive intensifier. The nouns remain different; hard marks each one as actually enforced.",
       "category": "construction",
       "aliases": [
-        "honest answer",
-        "honest framing",
-        "honest caveat"
+        "hard gate",
+        "hard boundary",
+        "hard constraint",
+        "hard stop"
       ],
+      "example": {
+        "claudish": "A signature mismatch is a hard stop.",
+        "english": "Stop if the signatures do not match."
+      }
+    },
+    {
+      "slug": "honest-shape",
+      "term": "the honest shape",
+      "plain_english": "the actual situation, stated candidly",
+      "explanation": "Combines a candor marker with Claude's flexible shape abstraction, often before an asymmetry, caveat, or constraint.",
+      "category": "construction",
+      "aliases": [],
       "example": {
         "claudish": "The honest shape is asymmetric: reads work; writes do not.",
         "english": "Reads work, but writes do not."
       }
     },
     {
-      "slug": "in-one-sentence",
-      "term": "in one sentence",
-      "plain_english": "a repeated summary is coming",
-      "explanation": "Introduces a compressed restatement, often immediately after the point was already made.",
+      "slug": "thread-wire-plumb-through",
+      "term": "thread / wire / plumb through",
+      "plain_english": "pass data, configuration, or callbacks across several layers",
+      "explanation": "Treats software as physical infrastructure: values are threaded end-to-end, plumbing carries them through, and completed connections are fully wired.",
       "category": "construction",
       "aliases": [
-        "put differently",
-        "in other words"
+        "threaded end-to-end",
+        "plumbed through",
+        "fully wired",
+        "wire up",
+        "wiring"
       ],
       "example": {
-        "claudish": "In one sentence: the cache is stale.",
-        "english": "The cache is out of date."
+        "claudish": "The value is threaded end-to-end through every layer.",
+        "english": "The value is passed through every layer."
       }
     },
     {
-      "slug": "key-distinction",
-      "term": "the key distinction",
-      "plain_english": "what matters here",
-      "explanation": "Stages the next clause as the decisive conceptual reveal.",
+      "slug": "youre-right-to-push-back",
+      "term": "you're right to push back",
+      "plain_english": "your correction or objection is valid",
+      "explanation": "A recurring validation formula that acknowledges a challenge before conceding or revising the point.",
       "category": "construction",
       "aliases": [
-        "the deeper point",
-        "the cleanest framing"
+        "you are right to push back"
       ],
       "example": {
-        "claudish": "The key distinction is ownership.",
-        "english": "Ownership is what matters here."
-      }
-    },
-    {
-      "slug": "not-x-but-y",
-      "term": "not X but Y",
-      "plain_english": "state the actual point directly",
-      "explanation": "Creates a polished binary by rejecting one frame before revealing the preferred one.",
-      "category": "construction",
-      "aliases": [
-        "X, not Y",
-        "less X than Y"
-      ],
-      "example": {
-        "claudish": "This is a routing failure, not a storage failure.",
-        "english": "Routing failed; storage did not."
-      }
-    },
-    {
-      "slug": "x-gated",
-      "term": "X-gated",
-      "plain_english": "X is required or restricts access",
-      "explanation": "Compresses a permission or prerequisite into a hyphenated governance system.",
-      "category": "construction",
-      "aliases": [
-        "owner-gated",
-        "approval-gated",
-        "quality-gated"
-      ],
-      "example": {
-        "claudish": "This is an owner-gated publish path.",
-        "english": "Only owners can publish."
+        "claudish": "You're right to push back—the cache isn't authoritative.",
+        "english": "You're correct: the cache isn't authoritative."
       }
     }
   ],
