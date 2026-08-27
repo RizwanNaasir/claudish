@@ -677,7 +677,7 @@
     },
     {
       "id": "absolutely-right-stuck",
-      "quote": "You’re absolutely right, I was stuck! Let me break out of this.",
+      "quote": "You're absolutely right, I was stuck! Let me break out of this.",
       "translation": "I was stuck. I’ll try a different approach.",
       "note": "Reflexive validation introduces an otherwise straightforward status update.",
       "source_id": "claude-code-3382-loop"
