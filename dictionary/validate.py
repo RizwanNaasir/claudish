@@ -62,12 +62,12 @@ def validate() -> dict[str, int]:
     recommended_slugs = data.get("recommended_slugs")
     require(
         isinstance(recommended_slugs, list)
-        and len(recommended_slugs) == 8
+        and bool(recommended_slugs)
         and all(
             isinstance(slug, str) and bool(SLUG_PATTERN.fullmatch(slug))
             for slug in recommended_slugs
         ),
-        "recommended_slugs must contain exactly eight valid slugs",
+        "recommended_slugs must be a non-empty list of valid slugs",
     )
     require(
         len(recommended_slugs) == len(set(recommended_slugs)),
@@ -152,8 +152,8 @@ def validate() -> dict[str, int]:
     require(len(slugs) == len(set(slugs)), "entry slugs must be unique")
     require(len(normalized_terms) == len(set(normalized_terms)), "entry terms must be unique")
     require(
-        set(recommended_slugs).issubset(slugs),
-        "recommended_slugs must reference existing entries",
+        len(recommended_slugs) == len(slugs) and set(recommended_slugs) == set(slugs),
+        "recommended_slugs must contain every entry exactly once",
     )
 
     sources = data.get("sources")
