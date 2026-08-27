@@ -252,7 +252,7 @@
     {
       "slug": "provenance",
       "term": "provenance",
-      "plain_english": "where something came from and what happened to it along the way",
+      "plain_english": "where something came from",
       "explanation": "For a file or piece of data, provenance is its history: who or what created it, how it was changed, and how it got here. Knowing where it is stored now is not enough.",
       "category": "word",
       "aliases": [
@@ -260,7 +260,7 @@
       ],
       "example": {
         "claudish": "The cache entry lacks provenance.",
-        "english": "We don’t know where this cached value came from or how it was created."
+        "english": "We don’t know where this cached value came from."
       }
     },
     {
@@ -354,7 +354,7 @@
     {
       "slug": "blast-radius",
       "term": "blast radius",
-      "plain_english": "how many other things could be affected if something goes wrong",
+      "plain_english": "how many other things could be affected if it fails",
       "explanation": "In engineering and security, blast radius means the systems, users, or data that a failure could affect. Claude also uses it for ordinary code changes: a narrow blast radius means fewer things could break.",
       "category": "phrase",
       "aliases": [],
@@ -529,7 +529,7 @@
     {
       "slug": "thread-wire-plumb-through",
       "term": "thread / wire / plumb through",
-      "plain_english": "pass something through all the parts of a program that need it",
+      "plain_english": "pass something through every relevant part",
       "explanation": "Claude uses thread, wire, and plumb when software pieces need to be connected. If a setting is wired through end to end, every relevant part of the program now receives it.",
       "category": "construction",
       "aliases": [
