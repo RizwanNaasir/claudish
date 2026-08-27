@@ -25,15 +25,15 @@
       "description": "Sentence shapes that make the dialect recognizable beyond vocabulary."
     }
   ],
-  "featured_slugs": [
+  "recommended_slugs": [
     "provenance",
     "gated-on",
-    "load-bearing",
-    "land",
-    "surface",
-    "honest-shape",
     "cadence",
-    "canonical"
+    "land",
+    "canonical",
+    "surface",
+    "load-bearing",
+    "honest-shape"
   ],
   "phrase_guide": [
     {

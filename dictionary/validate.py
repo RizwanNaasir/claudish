@@ -59,19 +59,19 @@ def validate() -> dict[str, int]:
         category_ids.append(category["id"])
     require(len(category_ids) == len(set(category_ids)), "category ids must be unique")
 
-    featured_slugs = data.get("featured_slugs")
+    recommended_slugs = data.get("recommended_slugs")
     require(
-        isinstance(featured_slugs, list)
-        and len(featured_slugs) == 8
+        isinstance(recommended_slugs, list)
+        and len(recommended_slugs) == 8
         and all(
             isinstance(slug, str) and bool(SLUG_PATTERN.fullmatch(slug))
-            for slug in featured_slugs
+            for slug in recommended_slugs
         ),
-        "featured_slugs must contain exactly eight valid slugs",
+        "recommended_slugs must contain exactly eight valid slugs",
     )
     require(
-        len(featured_slugs) == len(set(featured_slugs)),
-        "featured_slugs must be unique",
+        len(recommended_slugs) == len(set(recommended_slugs)),
+        "recommended_slugs must be unique",
     )
 
     phrase_guide = data.get("phrase_guide")
@@ -152,8 +152,8 @@ def validate() -> dict[str, int]:
     require(len(slugs) == len(set(slugs)), "entry slugs must be unique")
     require(len(normalized_terms) == len(set(normalized_terms)), "entry terms must be unique")
     require(
-        set(featured_slugs).issubset(slugs),
-        "featured_slugs must reference existing entries",
+        set(recommended_slugs).issubset(slugs),
+        "recommended_slugs must reference existing entries",
     )
 
     sources = data.get("sources")
