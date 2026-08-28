@@ -60,22 +60,6 @@
   "phrase_guide_intro": "Claudish often combines ordinary words in predictable ways. Once you recognize these patterns, you can translate long phrases one piece at a time.",
   "phrase_guide": [
     {
-      "id": "x-gated",
-      "pattern": "X-gated",
-      "plain_english": "X must happen before work can continue.",
-      "explanation": "The word before -gated names the person, approval, or check that is holding things up.",
-      "examples": [
-        {
-          "claudish": "owner-gated",
-          "english": "waiting for the owner’s approval"
-        },
-        {
-          "claudish": "quality-gated",
-          "english": "blocked until the quality check passes"
-        }
-      ]
-    },
-    {
       "id": "x-shaped",
       "pattern": "X-shaped",
       "plain_english": "It looks or behaves like X, but may not actually be X.",
@@ -112,18 +96,6 @@
         {
           "claudish": "This isn’t a cache problem; it’s an ownership problem.",
           "english": "The ownership rules caused the problem, not the cache."
-        }
-      ]
-    },
-    {
-      "id": "honest-shape-restatement",
-      "pattern": "the honest shape is…",
-      "plain_english": "Here is what is actually true.",
-      "explanation": "Claude often puts this phrase before a blunt limitation. Drop the introduction and translate what comes after it.",
-      "examples": [
-        {
-          "claudish": "The honest shape is asymmetric: reads work; writes do not.",
-          "english": "Reads work, but writes do not."
         }
       ]
     }
@@ -298,15 +270,15 @@
     {
       "slug": "spine",
       "term": "spine",
-      "plain_english": "the main part that everything else is built around",
-      "explanation": "Like the spine in a body, this part supports and connects the rest. Claude uses spine for the system, process, or central idea that everything else depends on.",
+      "plain_english": "the central structure that organizes and connects the rest",
+      "explanation": "Claude uses spine for the central structure of a system or process—the part that organizes and connects its other pieces. It describes how the pieces fit together, not simply which part is most important.",
       "category": "word",
       "aliases": [
         "the spine of"
       ],
       "example": {
         "claudish": "The queue is the spine of the deployment flow.",
-        "english": "The deployment process is built around the queue."
+        "english": "The queue organizes the deployment process."
       }
     },
     {
@@ -443,8 +415,8 @@
     {
       "slug": "cleanly",
       "term": "cleanly",
-      "plain_english": "without any obvious problems",
-      "explanation": "Claude often adds cleanly to say that a change, migration, or test finished without trouble. It is a vague all-clear: unless Claude names the checks it ran, it may mean only that nothing obviously went wrong.",
+      "plain_english": "without obvious errors or complications",
+      "explanation": "Claude often adds cleanly to say that a change, migration, or test finished without obvious errors or complications. It describes how the operation completed; unless Claude names the checks it ran, it remains a loose reassurance.",
       "category": "reassurance",
       "aliases": [
         "clean"
@@ -457,8 +429,8 @@
     {
       "slug": "coherent",
       "term": "coherent",
-      "plain_english": "a vague all-clear: nothing seems broken or out of sync",
-      "explanation": "Coherent is normal English. It becomes Claudish when Claude uses it to reassure you that a file, plan, or entire system is okay without saying exactly what it checked. In practice, it often means “nothing looks obviously wrong.”",
+      "plain_english": "internally consistent",
+      "explanation": "Claude uses coherent when the parts of a file, plan, or system appear to agree with one another. It describes the consistency of the result; unless Claude names the checks it ran, it remains a loose reassurance.",
       "category": "reassurance",
       "aliases": [
         "coherence"
