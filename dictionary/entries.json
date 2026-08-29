@@ -30,6 +30,7 @@
     "provenance",
     "honest-shape",
     "load-bearing",
+    "belt-and-suspenders",
     "cadence",
     "land",
     "surface",
@@ -321,6 +322,22 @@
       "example": {
         "claudish": "A stalled worker can wedge the queue.",
         "english": "A stuck worker can stop the queue from processing new jobs."
+      }
+    },
+    {
+      "slug": "belt-and-suspenders",
+      "term": "belt-and-suspenders",
+      "plain_english": "an extra safeguard in case the first one fails",
+      "explanation": "A belt and suspenders both keep trousers up. Claude uses the phrase for a second check, fallback, or safeguard that deliberately duplicates some protection in case the first one misses a problem.",
+      "category": "phrase",
+      "aliases": [
+        "belt and suspenders",
+        "belt-and-braces",
+        "belt and braces"
+      ],
+      "example": {
+        "claudish": "The second guard is a belt-and-suspenders check.",
+        "english": "The second guard is an extra safety check in case the first one misses the problem."
       }
     },
     {
