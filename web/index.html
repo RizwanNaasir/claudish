@@ -59,10 +59,10 @@
       <div class="console">
         <div class="console__bar">
           <div class="switch" role="radiogroup" aria-label="Translation direction">
-            <button type="button" class="switch__opt is-on" role="radio" aria-checked="true" data-dir="to-claudish">
+            <button type="button" class="switch__opt" role="radio" aria-checked="false" data-dir="to-claudish">
               English <span aria-hidden="true">→</span> Claudish
             </button>
-            <button type="button" class="switch__opt" role="radio" aria-checked="false" data-dir="to-english">
+            <button type="button" class="switch__opt is-on" role="radio" aria-checked="true" data-dir="to-english">
               Claudish <span aria-hidden="true">→</span> English
             </button>
           </div>
@@ -75,17 +75,17 @@
         </div>
 
         <div class="panes">
-          <div class="pane pane--in" id="paneIn">
+          <div class="pane pane--in is-cl" id="paneIn">
             <div class="pane__head">
-              <label class="tag tag--en" for="src" id="srcLabel">Plain English</label>
+              <label class="tag tag--cl" for="src" id="srcLabel">Claudish</label>
               <span class="count"><span id="count">0</span> chars</span>
             </div>
-            <textarea id="src" spellcheck="true" placeholder="Type or paste a sentence…"></textarea>
+            <textarea id="src" spellcheck="true" placeholder="Paste something suspiciously well-structured…"></textarea>
           </div>
 
           <div class="pane pane--out" id="paneOut">
             <div class="pane__head">
-              <span class="tag tag--cl" id="outLabel">Claudish</span>
+              <span class="tag tag--en" id="outLabel">Plain English</span>
               <button type="button" class="mini" id="copy" disabled>Copy</button>
             </div>
             <div class="out" id="out" aria-live="polite">

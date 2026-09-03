@@ -32,7 +32,7 @@
     'to-english':  { from: 'Claudish',      to: 'Plain English' }
   };
 
-  var dir = 'to-claudish';
+  var dir = 'to-english';   // landing on the decoder is the friendlier default
   var busy = false;
   var lastOutput = '';
 
