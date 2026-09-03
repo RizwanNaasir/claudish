@@ -20,7 +20,8 @@ import argparse
 import gc
 import os
 import threading
-from collections import OrderedDict
+import time
+from collections import OrderedDict, deque
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -53,6 +54,52 @@ _loaded: "OrderedDict[str, object]" = OrderedDict()
 # argv; the CLI flags below still win when the module is run directly.
 max_loaded = int(os.environ.get("CLAUDISH_MAX_LOADED", "2"))
 n_ctx = int(os.environ.get("CLAUDISH_N_CTX", "2048"))
+
+# A translation costs a couple of CPU-seconds, so the expensive endpoint is
+# rate limited per client and the number of requests allowed to queue behind
+# the inference lock is capped. Without the queue cap a burst just parks
+# threads on the lock and every one of them waits for the whole backlog.
+RATE_LIMIT = int(os.environ.get("CLAUDISH_RATE_LIMIT", "20"))
+RATE_WINDOW = int(os.environ.get("CLAUDISH_RATE_WINDOW", "60"))
+MAX_QUEUE = int(os.environ.get("CLAUDISH_MAX_QUEUE", "4"))
+
+_rate_lock = threading.Lock()
+_hits: "OrderedDict[str, deque]" = OrderedDict()
+_inflight = 0
+
+
+def client_id() -> str:
+    """Identify the caller, trusting X-Forwarded-For only from the local proxy."""
+    remote = request.remote_addr or "unknown"
+    if remote in ("127.0.0.1", "::1"):
+        forwarded = request.headers.get("X-Forwarded-For", "")
+        if forwarded:
+            return forwarded.split(",")[-1].strip()
+    return remote
+
+
+def over_rate_limit(who: str) -> float:
+    """Return seconds to wait, or 0.0 when the caller is within its budget."""
+    now = time.monotonic()
+    cutoff = now - RATE_WINDOW
+    with _rate_lock:
+        seen = _hits.get(who)
+        if seen is None:
+            seen = _hits[who] = deque()
+        _hits.move_to_end(who)
+
+        while seen and seen[0] < cutoff:
+            seen.popleft()
+
+        # Forget idle clients so the table cannot grow without bound.
+        while len(_hits) > 1024:
+            _, stale = _hits.popitem(last=False)
+
+        if len(seen) >= RATE_LIMIT:
+            return max(1.0, RATE_WINDOW - (now - seen[0]))
+
+        seen.append(now)
+        return 0.0
 
 
 def get_program(direction: str):
@@ -96,6 +143,7 @@ def status():
         programs=per_direction,
         ready=all(v != "cold" for v in per_direction.values()),
         max_loaded=max_loaded,
+        rate_limit={"requests": RATE_LIMIT, "window_s": RATE_WINDOW},
     )
 
 
@@ -112,12 +160,35 @@ def translate():
     if len(text) > MAX_CHARS:
         return jsonify(error=f"input is over the {MAX_CHARS}-character limit"), 413
 
+    who = client_id()
+    retry_after = over_rate_limit(who)
+    if retry_after:
+        app.logger.info("rate limited %s", who)
+        return (
+            jsonify(error=f"Too many translations. Try again in {int(retry_after)}s."),
+            429,
+            {"Retry-After": str(int(retry_after))},
+        )
+
+    global _inflight
+    with _rate_lock:
+        if _inflight >= MAX_QUEUE:
+            return (
+                jsonify(error="The translator is busy. Try again in a moment."),
+                503,
+                {"Retry-After": "5"},
+            )
+        _inflight += 1
+
     try:
         fn = get_program(direction)
         with _infer_lock:
             output = fn(text)
     except Exception as exc:  # surface the real reason rather than a blank 500
         return jsonify(error=f"{type(exc).__name__}: {exc}"), 500
+    finally:
+        with _rate_lock:
+            _inflight -= 1
 
     return jsonify(direction=direction, output=str(output).strip())
 

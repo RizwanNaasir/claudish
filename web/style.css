@@ -154,9 +154,12 @@ a:hover { color: var(--ink); }
   background-position: 0 clamp(3rem, 8vw, 7rem);
 }
 
+/* Sits in the hero's left gutter, never over the text. The offset is measured
+   back from the gutter so the gap to the content edge stays constant as --gut
+   shrinks; below 1200px there is no room for it and it is dropped. */
 .rail {
   position: absolute;
-  left: calc(var(--gut) - 0.85rem);
+  left: calc(var(--gut) - 2.6rem);
   top: clamp(3rem, 8vw, 7rem);
   writing-mode: vertical-rl;
   font-family: var(--mono);
@@ -167,7 +170,7 @@ a:hover { color: var(--ink); }
   opacity: 0.72;
 }
 .rail span { padding-block: 0.5rem; border-inline-start: 1px solid var(--rule); padding-inline-start: 0.55rem; }
-@media (max-width: 1100px) { .rail { display: none; } }
+@media (max-width: 1200px) { .rail { display: none; } }
 
 .hero__head { grid-column: 1 / span 7; }
 @media (max-width: 900px) { .hero__head { grid-column: 1 / -1; } }
