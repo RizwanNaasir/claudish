@@ -7,6 +7,12 @@
 # there is no wheel and pip would have to build llama.cpp from source.
 FROM python:3.12-slim
 
+# libgomp is the OpenMP runtime the llama.cpp wheel links against; the slim
+# images do not ship it, and without it libllama.so fails to load.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir \
         -r /tmp/requirements.txt \
