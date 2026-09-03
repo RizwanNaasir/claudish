@@ -1,33 +1,21 @@
-# llama-cpp-python publishes no wheels, so it is compiled here once and the
-# toolchain is left behind in the build stage.
-FROM python:3.13-slim AS build
+# Python 3.12, deliberately, not 3.13: programasweights pins
+# llama-cpp-python<=0.3.19, and the cp313 linux wheel on the PAW index fails to
+# install ("OSError: RECORD"). The cp312 wheel is fine, which also means no
+# compiler is needed here at all.
+#
+# Those wheels are tagged linux_x86_64, so this image is x86-64 only. On arm64
+# there is no wheel and pip would have to build llama.cpp from source.
+FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential cmake ninja-build \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /build
-COPY requirements.txt .
-
-# Install into a venv rather than --prefix: pip's RECORD handling breaks under
-# --prefix, and a venv copies cleanly into the runtime stage.
-# Parallelism is capped because four concurrent C++ jobs will OOM a small box.
-ENV CMAKE_BUILD_PARALLEL_LEVEL=2
-RUN python -m venv /opt/venv \
-    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
-    && /opt/venv/bin/pip install --no-cache-dir \
-        -r requirements.txt \
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir \
+        -r /tmp/requirements.txt \
         gunicorn \
-        --extra-index-url https://pypi.programasweights.com/simple/
-
-
-FROM python:3.13-slim AS runtime
-
-COPY --from=build /opt/venv /opt/venv
+        --extra-index-url https://pypi.programasweights.com/simple/ \
+    && rm /tmp/requirements.txt
 
 # The model cache lives on a volume so the ~710 MB download happens once.
-ENV PATH="/opt/venv/bin:$PATH" \
-    PAW_CACHE_DIR=/models \
+ENV PAW_CACHE_DIR=/models \
     CLAUDISH_MAX_LOADED=2 \
     CLAUDISH_N_CTX=2048 \
     PYTHONUNBUFFERED=1
