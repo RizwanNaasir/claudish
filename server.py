@@ -37,6 +37,7 @@ MAX_CHARS = 4000
 ROOT = Path(__file__).resolve().parent
 WEB = ROOT / "web"
 SPECS = ROOT / "specs"
+DICTIONARY = ROOT / "dictionary"
 
 app = Flask(__name__, static_folder=None)
 
@@ -129,6 +130,12 @@ def index():
 @app.get("/specs/<path:name>")
 def spec(name: str):
     return send_from_directory(SPECS, name, mimetype="text/plain; charset=utf-8")
+
+
+@app.get("/dictionary/<path:name>")
+def dictionary(name: str):
+    """The curated term list the UI annotates and renders from."""
+    return send_from_directory(DICTIONARY, name)
 
 
 @app.get("/<path:name>")

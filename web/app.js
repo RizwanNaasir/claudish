@@ -176,20 +176,42 @@
   }
 
   /* ── lexicon section ───────────────────────────────────── */
-  function renderLexicon() {
+  function renderLexicon(entries) {
     var frag = document.createDocumentFragment();
-    window.CLAUDISH.terms.forEach(function (t) {
+    entries.forEach(function (e) {
       var row = document.createElement('div');
       row.className = 'lex__row';
+
       var dt = document.createElement('dt');
-      dt.textContent = t[0];
+      dt.textContent = e.term;
+
       var dd = document.createElement('dd');
-      dd.textContent = t[1];
+      dd.textContent = e.plain_english;
+      if (e.example && e.example.claudish) {
+        var ex = document.createElement('span');
+        ex.className = 'lex__eg';
+        ex.textContent = e.example.claudish;
+        dd.appendChild(ex);
+      }
+
       row.appendChild(dt);
       row.appendChild(dd);
       frag.appendChild(row);
     });
+    els.lex.innerHTML = '';
     els.lex.appendChild(frag);
+  }
+
+  /* The specimen and the tells are written by hand in the markup. Re-gloss
+     them from the dictionary so nothing on the page contradicts it. */
+  function reglossStatic() {
+    document.querySelectorAll('.tm[data-plain]').forEach(function (el) {
+      var entry = window.CLAUDISH.lookup(el.textContent);
+      if (entry) {
+        el.dataset.plain = entry.plain_english;
+        el.dataset.slug = entry.slug;
+      }
+    });
   }
 
   /* ── misc wiring ───────────────────────────────────────── */
@@ -238,7 +260,19 @@
   if (!/Mac|iPhone|iPad/.test(navigator.platform || '')) els.runKey.textContent = 'Ctrl↵';
 
   applyDirection();
-  renderLexicon();
   updateCount();
   checkStatus();
+
+  window.CLAUDISH.load('/dictionary/entries.json')
+    .then(function (res) {
+      renderLexicon(res.entries);
+      reglossStatic();
+    })
+    .catch(function (err) {
+      /* The translator still works; only the glossing degrades to compounds. */
+      console.warn('dictionary unavailable:', err);
+      els.lex.innerHTML =
+        '<p class="lex__err">The dictionary could not be loaded, so terms are ' +
+        'not annotated. The translator is unaffected.</p>';
+    });
 })();

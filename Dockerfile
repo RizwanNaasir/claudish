@@ -9,9 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /build
 COPY requirements.txt .
 
-# Cap build parallelism: four concurrent C++ jobs will OOM a small box.
+# Install into a venv rather than --prefix: pip's RECORD handling breaks under
+# --prefix, and a venv copies cleanly into the runtime stage.
+# Parallelism is capped because four concurrent C++ jobs will OOM a small box.
 ENV CMAKE_BUILD_PARALLEL_LEVEL=2
-RUN pip install --no-cache-dir --prefix=/install \
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /opt/venv/bin/pip install --no-cache-dir \
         -r requirements.txt \
         gunicorn \
         --extra-index-url https://pypi.programasweights.com/simple/
@@ -19,10 +23,11 @@ RUN pip install --no-cache-dir --prefix=/install \
 
 FROM python:3.13-slim AS runtime
 
-COPY --from=build /install /usr/local
+COPY --from=build /opt/venv /opt/venv
 
 # The model cache lives on a volume so the ~710 MB download happens once.
-ENV PAW_CACHE_DIR=/models \
+ENV PATH="/opt/venv/bin:$PATH" \
+    PAW_CACHE_DIR=/models \
     CLAUDISH_MAX_LOADED=2 \
     CLAUDISH_N_CTX=2048 \
     PYTHONUNBUFFERED=1
@@ -34,6 +39,7 @@ WORKDIR /app
 COPY --chown=claudish:claudish server.py ./
 COPY --chown=claudish:claudish web/ ./web/
 COPY --chown=claudish:claudish specs/ ./specs/
+COPY --chown=claudish:claudish dictionary/ ./dictionary/
 
 USER claudish
 EXPOSE 8787

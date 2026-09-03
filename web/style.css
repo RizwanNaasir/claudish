@@ -593,6 +593,17 @@ h2 {
 @media (min-width: 60rem) {
   .lex { column-gap: clamp(2rem, 5vw, 4.5rem); }
 }
+/* the curated Claudish example that ships with each dictionary entry */
+.lex__eg {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+.lex__err { margin: 1.25rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
 
 /* ── tells ───────────────────────────────────────────────── */
 .tells {

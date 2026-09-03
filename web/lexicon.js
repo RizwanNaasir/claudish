@@ -1,70 +1,16 @@
 /* Claudish lexicon.
-   Every entry is taken from specs/claudish-to-english.md — the decode list,
-   the over-formal research register, and the hyphenated-compound patterns.
-   Used twice: to render the Lexicon section, and to annotate live output. */
+ *
+ * The dictionary itself lives in dictionary/entries.json — the curated,
+ * CI-validated list that ships with the repo. This module is only the matcher:
+ * it turns those entries into a regex, glosses matches with their
+ * plain_english, and renders nothing on its own.
+ *
+ * The one thing added on top is compound handling. The dictionary names the
+ * pattern ("X-gated", "hard X") but cannot enumerate every stem, so
+ * source-grounded compounds are decoded from their parts.
+ */
 (function (global) {
   'use strict';
-
-  /* Ordered longest-first so multi-word entries win over their parts. */
-  var TERMS = [
-    // structural + process metaphors
-    ['approval-gated',    'approval is required'],
-    ['owner-gated',       'only owners may do it'],
-    ['quality-gated',     'it has to pass a quality check first'],
-    ['hard constraint',   'a strict rule'],
-    ['hard boundary',     'a strict limit'],
-    ['hard gate',         'a strict requirement'],
-    ['hard stop',         'a firm cut-off'],
-    ['context router',    'whatever decides what goes where'],
-    ['routing layer',     'the part that decides where things go'],
-    ['claim gate',        'the bar a claim has to clear'],
-    ['exchange rate',     'the trade-off'],
-    ['lower bound',       'the minimum'],
-    ['load-bearing',      'essential'],
-    ['gated on',          'requires first'],
-    ['load bearing',      'essential'],
-    ['provenance',        'where it came from'],
-    ['confirmatory',      'confirming something already expected'],
-    ['calibration',       'adjustment'],
-    ['trajectory',        'the direction it is heading'],
-    ['implicates',        'involves'],
-    ['canonical',         'authoritative or official'],
-    ['handoff',           'a transfer'],
-    ['blocker',           'something preventing progress'],
-    ['surfaced',          'appeared, was found, or was reported'],
-    ['audited',           'checked'],
-    ['verified',          'tested or confirmed'],
-    ['headline',          'the main result'],
-    ['frontier',          'the leading edge'],
-    ['protocol',          'the procedure'],
-    ['survives',          'holds up'],
-    ['lineage',           'its history'],
-    ['landed',            'merged, finished, or arrived'],
-    ['matched',           'comparable'],
-    ['routing',           'where things go'],
-    ['horizon',           'how far ahead this looks'],
-    ['gating',            'requiring'],
-    ['triage',            'sorting by priority'],
-    ['parity',            'sameness'],
-    ['regime',            'the setup'],
-    ['verdict',           'the conclusion'],
-    ['frozen',            'fixed and not changing'],
-    ['cleanly',           'without complications'],
-    ['surface',           'the actual thing being discussed'],
-    ['clears',            'passes'],
-    ['stale',             'outdated'],
-    ['drift',             'change or divergence over time'],
-    ['spine',             'the main structure'],
-    ['probe',             'a check'],
-    ['slice',             'a subset'],
-    ['grain',             'the natural structure of it'],
-    ['shape',             'the form of it'],
-    ['layer',             'the component or part'],
-    ['floor',             'the minimum'],
-    ['gate',              'a requirement that must be met first'],
-    ['path',              'the action or option'],
-    ['cell',              'one entry in the breakdown']
-  ];
 
   /* X-gated, X-backed, X-layer … — both halves come from the input, so the
      gloss is built from the stem rather than stated in the abstract. */
@@ -82,50 +28,158 @@
     boundary: 'the limit set by {x}'
   };
 
+  var state = { entries: [], byVariant: Object.create(null), re: null, loaded: false };
+
   function esc(s) {
     return String(s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  var lookup = Object.create(null);
-  TERMS.forEach(function (t) { lookup[t[0].toLowerCase()] = t[1]; });
+  /* Curly and straight apostrophes are the same character for matching. Both
+     are one code unit, so offsets into the normalised string still line up
+     with the original. */
+  function norm(s) {
+    return String(s).replace(/[‘’]/g, "'");
+  }
 
-  var alternation = TERMS
-    .map(function (t) { return t[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); })
-    .join('|');
+  function reEsc(s) {
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
 
-  var compoundAlt = Object.keys(COMPOUND).join('|');
+  /* Surface forms for one entry: the term (which may pack several, as in
+     "land / landed"), plus every alias. Entries that are patterns rather than
+     literals — "hard X", "X-gated" — are dropped here; COMPOUND covers them. */
+  function variantsOf(entry) {
+    var out = [];
+    var seen = Object.create(null);
+    function push(raw) {
+      var t = norm(String(raw || '')).trim();
+      if (!t || /\bX\b/.test(t)) return;
+      var k = t.toLowerCase();
+      if (seen[k]) return;
+      seen[k] = 1;
+      out.push(t);
+    }
+    String(entry.term || '').split('/').forEach(push);
+    (entry.aliases || []).forEach(push);
+    return out;
+  }
 
-  /* Compounds first, then the fixed list. \b on both ends keeps "gate" out of
-     "gateway" and "path" out of "pathological". */
-  var RE = new RegExp(
-    '\\b([A-Za-z]+)-(' + compoundAlt + ')\\b|\\b(' + alternation + ')\\b',
-    'gi'
-  );
+  function build(doc) {
+    var entries = (doc && doc.entries) || [];
 
-  /* Escape text, then wrap any recognised term in an annotated <span>. */
+    /* Honour the curated display order, then append anything not listed. */
+    var order = (doc && doc.recommended_slugs) || [];
+    var rank = Object.create(null);
+    order.forEach(function (slug, i) { rank[slug] = i; });
+    entries = entries.slice().sort(function (a, b) {
+      var ra = slug_rank(rank, a), rb = slug_rank(rank, b);
+      return ra - rb;
+    });
+
+    var byVariant = Object.create(null);
+    var all = [];
+    entries.forEach(function (e) {
+      variantsOf(e).forEach(function (v) {
+        var k = v.toLowerCase();
+        /* Longer, more specific variants win, so never let a short alias
+           overwrite an entry already claimed by a longer one. */
+        if (!byVariant[k]) { byVariant[k] = e; all.push(v); }
+      });
+    });
+
+    /* Longest first so "hard boundary" beats "boundary". */
+    all.sort(function (a, b) { return b.length - a.length; });
+
+    var re = null;
+    if (all.length) {
+      re = new RegExp(
+        '\\b(?:' + all.map(reEsc).join('|') + ')\\b' +
+        '|\\b(?<stem>[A-Za-z]+)-(?<suffix>' + Object.keys(COMPOUND).join('|') + ')\\b',
+        'gi'
+      );
+    }
+
+    state.entries = entries;
+    state.byVariant = byVariant;
+    state.re = re;
+    state.loaded = true;
+    return entries;
+  }
+
+  function slug_rank(rank, e) {
+    var r = rank[e.slug];
+    return r === undefined ? 1e6 : r;
+  }
+
+  /* Compound-only matcher, used when the dictionary could not be fetched. */
+  function compoundOnlyRe() {
+    return new RegExp(
+      '\\b(?<stem>[A-Za-z]+)-(?<suffix>' + Object.keys(COMPOUND).join('|') + ')\\b',
+      'gi'
+    );
+  }
+
+  function lookup(surface) {
+    return state.byVariant[norm(surface).toLowerCase()] || null;
+  }
+
+  /* Escape the text, wrapping any recognised term in an annotated span. */
   function annotate(text) {
+    var re = state.re || compoundOnlyRe();
+    var hay = norm(text);          // same length as text, so indices transfer
     var out = '';
     var last = 0;
     var m;
-    RE.lastIndex = 0;
-    while ((m = RE.exec(text)) !== null) {
+    re.lastIndex = 0;
+    while ((m = re.exec(hay)) !== null) {
+      var surface = text.slice(m.index, m.index + m[0].length);
       out += esc(text.slice(last, m.index));
-      /* An exact lexicon entry always beats the generic compound rule, so
-         "owner-gated" glosses as itself rather than as "requires owner". */
-      var gloss = lookup[m[0].toLowerCase()];
-      if (!gloss && m[2]) {
-        gloss = COMPOUND[m[2].toLowerCase()].replace('{x}', m[1].toLowerCase());
+
+      /* A real dictionary entry always beats the generic compound rule. */
+      var entry = lookup(m[0]);
+      var gloss, slug = '';
+      if (entry) {
+        gloss = entry.plain_english;
+        slug = entry.slug || '';
+      } else if (m.groups && m.groups.suffix) {
+        gloss = COMPOUND[m.groups.suffix.toLowerCase()]
+          .replace('{x}', m.groups.stem.toLowerCase());
+      } else {
+        out += esc(surface);
+        last = m.index + m[0].length;
+        continue;
       }
-      if (!gloss) gloss = lookup[m[3].toLowerCase()];
-      out += '<span class="tm" tabindex="0" data-plain="' + esc(gloss) + '">' +
-             esc(m[0]) + '</span>';
+
+      out += '<span class="tm" tabindex="0" data-plain="' + esc(gloss) + '"' +
+             (slug ? ' data-slug="' + esc(slug) + '"' : '') + '>' +
+             esc(surface) + '</span>';
       last = m.index + m[0].length;
     }
     out += esc(text.slice(last));
     return out;
   }
 
-  global.CLAUDISH = { terms: TERMS, compounds: COMPOUND, annotate: annotate, escape: esc };
+  function load(url) {
+    return fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('dictionary HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (doc) {
+        build(doc);
+        return { entries: state.entries, doc: doc };
+      });
+  }
+
+  global.CLAUDISH = {
+    load: load,
+    annotate: annotate,
+    lookup: lookup,
+    escape: esc,
+    compounds: COMPOUND,
+    get entries() { return state.entries; },
+    get loaded() { return state.loaded; }
+  };
 })(window);
