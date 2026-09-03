@@ -1,0 +1,38 @@
+services:
+  claudish:
+    build: .
+    image: claudish:latest
+    container_name: claudish
+    restart: unless-stopped
+
+    ports:
+      # Bound to loopback: reach it over Tailscale or a reverse proxy rather
+      # than exposing it on the LAN. Use "8787:8787" to publish it directly.
+      - "127.0.0.1:8787:8787"
+
+    environment:
+      # Both directions resident (~1.6 GB). Set to 1 to halve that on a
+      # memory-constrained host, at the cost of a ~1 s reload when switching.
+      CLAUDISH_MAX_LOADED: "2"
+      CLAUDISH_N_CTX: "2048"
+
+    volumes:
+      # ~710 MB of model cache, kept across rebuilds.
+      - claudish-models:/models
+
+    # llama.cpp saturates every core it can see and ignores OMP_NUM_THREADS,
+    # so the CPU cap has to come from the container runtime. Two cores keeps
+    # translations near 2-3 s while leaving the rest of the box alone.
+    cpus: 2.0
+    mem_limit: 2g
+
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:8787/api/status', timeout=5).status == 200 else sys.exit(1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  claudish-models:
