@@ -1,27 +1,47 @@
-# Python 3.12, deliberately, not 3.13: programasweights pins
-# llama-cpp-python<=0.3.19, and the cp313 linux wheel on the PAW index fails to
-# install ("OSError: RECORD"). The cp312 wheel is fine, which also means no
-# compiler is needed here at all.
+# llama-cpp-python is compiled here rather than taken from a wheel.
 #
-# Those wheels are tagged linux_x86_64, so this image is x86-64 only. On arm64
-# there is no wheel and pip would have to build llama.cpp from source.
-FROM python:3.12-slim
+# Two things force that. programasweights pins llama-cpp-python<=0.3.19, and
+# PyPI publishes no wheels at all for it. The PAW index does publish Linux
+# wheels, but their libggml-cpu.so is built with AVX-512, so on any CPU without
+# it (Zen 2 and Zen 3 desktop parts included) the worker dies with SIGILL the
+# moment a model loads. Its cp313 wheel also fails to install outright
+# ("OSError: RECORD"), which is why this image is on 3.12.
+#
+# Building with GGML_NATIVE=OFF and AVX2/FMA/F16C on gives a binary that runs on
+# any x86-64 machine from about 2013 onward, instead of one tied to whatever
+# built it.
+FROM python:3.12-slim AS build
 
-# libgomp is the OpenMP runtime the llama.cpp wheel links against; the slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential cmake ninja-build \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /tmp/requirements.txt
+
+ENV CMAKE_ARGS="-DGGML_NATIVE=OFF -DGGML_AVX=ON -DGGML_AVX2=ON -DGGML_FMA=ON -DGGML_F16C=ON -DGGML_AVX512=OFF" \
+    CMAKE_BUILD_PARALLEL_LEVEL=4
+
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /opt/venv/bin/pip install --no-cache-dir \
+        --no-binary llama-cpp-python \
+        -r /tmp/requirements.txt \
+        gunicorn
+
+
+FROM python:3.12-slim AS runtime
+
+# libgomp is the OpenMP runtime the compiled llama.cpp links against; the slim
 # images do not ship it, and without it libllama.so fails to load.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir \
-        -r /tmp/requirements.txt \
-        gunicorn \
-        --extra-index-url https://pypi.programasweights.com/simple/ \
-    && rm /tmp/requirements.txt
+COPY --from=build /opt/venv /opt/venv
 
 # The model cache lives on a volume so the ~710 MB download happens once.
-ENV PAW_CACHE_DIR=/models \
+ENV PATH="/opt/venv/bin:$PATH" \
+    PAW_CACHE_DIR=/models \
     CLAUDISH_MAX_LOADED=2 \
     CLAUDISH_N_CTX=2048 \
     PYTHONUNBUFFERED=1
