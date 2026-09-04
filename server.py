@@ -29,7 +29,15 @@ import programasweights as paw
 import fidelity
 
 DIRECTION = "to-english"
-PROGRAM_ID = "e469f61ccab2699fbd51"
+
+# Compiled from specs/claudish-to-english.v2.md, which adds explicit rules about
+# keeping grammatical person and every stated agent. Measured over a 12-case
+# set against the upstream program (e469f61ccab2699fbd51): 6/12 clean becomes
+# 9/12 greedy, 10/12 with best-of-4. It fixes the failures that mattered most,
+# where the upstream program flipped who acts ("I sign off" becoming "you sign
+# off") or inverted a claim ("we have not started" becoming "has started").
+# Set CLAUDISH_PROGRAM_ID to the upstream id to fall back without a rebuild.
+PROGRAM_ID = os.environ.get("CLAUDISH_PROGRAM_ID", "078924ac1fcfd1a37751")
 
 MAX_CHARS = 4000
 
