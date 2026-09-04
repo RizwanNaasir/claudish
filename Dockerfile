@@ -42,7 +42,6 @@ COPY --from=build /opt/venv /opt/venv
 # The model cache lives on a volume so the ~710 MB download happens once.
 ENV PATH="/opt/venv/bin:$PATH" \
     PAW_CACHE_DIR=/models \
-    CLAUDISH_MAX_LOADED=2 \
     CLAUDISH_N_CTX=2048 \
     PYTHONUNBUFFERED=1
 
@@ -50,7 +49,7 @@ RUN useradd --create-home --uid 10001 claudish \
     && mkdir -p /models && chown claudish:claudish /models
 
 WORKDIR /app
-COPY --chown=claudish:claudish server.py ./
+COPY --chown=claudish:claudish server.py fidelity.py ./
 COPY --chown=claudish:claudish web/ ./web/
 COPY --chown=claudish:claudish specs/ ./specs/
 COPY --chown=claudish:claudish dictionary/ ./dictionary/

@@ -608,6 +608,38 @@ h2 {
 }
 .lex__err { margin: 1.25rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
 
+/* ── terms found in the pasted passage ───────────────────── */
+.terms {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.terms__label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-right: 0.2rem;
+}
+.terms .tm { font-family: var(--serif); font-size: 0.98rem; }
+
+/* honest note when the paraphrase looks lossy */
+.qnote {
+  margin: 0;
+  padding: 0.7rem 1rem 0.85rem;
+  border-top: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  color: var(--en);
+}
+
 /* ── tells ───────────────────────────────────────────────── */
 .tells {
   list-style: none;

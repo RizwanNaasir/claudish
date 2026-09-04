@@ -33,8 +33,9 @@ python translate.py to-english "Here’s where I’d hold the line: do not launc
 
 ## Web UI
 
-A local single-page UI for both directions, with the Claudish jargon annotated
-in place so you can hover any term for its plain-English decoding.
+A local single-page decoder: paste Claudish, get back what it actually says.
+Every dictionary term found in the passage is listed underneath with its
+plain-English meaning.
 
 ```bash
 pip install flask
@@ -43,51 +44,50 @@ python server.py
 
 Then open <http://127.0.0.1:8787>. The first translation downloads the base
 model once (~600 MB); after that everything runs locally and nothing leaves the
-machine. `--port` and `--host` are available if 8787 is taken.
+machine.
+
+Only the Claudish-to-English direction is served. The reverse program still
+exists upstream, but this deployment never loads it: one direction is what it
+needs, and the base model is not shared between the two, so holding both would
+roughly double resident memory.
+
+### Fidelity
+
+The specs promise a paraphrase, and the model mostly delivers one — but it does
+drift, dropping a subject or flipping first person to second. Greedy decoding is
+deterministic, so simply allowing more time changes nothing; it only helps when
+spent on *different* candidates.
+
+So the greedy answer is audited against cheap surface invariants (person,
+negation, numbers, names) and returned immediately when it is clean. Only a
+suspect translation is retried at a non-zero temperature, and the most faithful
+candidate wins. Anything still wrong is reported next to the output rather than
+hidden. Measured over a 12-case set:
+
+| `CLAUDISH_BEST_OF` | clean | mean score | mean time |
+|---|---|---|---|
+| 1 (greedy only) | 5/12 | 0.812 | 0.42 s |
+| **4 (default)** | **8/12** | **0.888** | **1.19 s** |
+| 6 | 7/12 | 0.888 | 1.70 s |
+
+Six buys nothing over four. `CLAUDISH_TIME_BUDGET` (default 7 s) caps the search.
+
+### Limits
+
+`/api/translate` is rate limited per client — `CLAUDISH_RATE_LIMIT` requests
+(default 20) per `CLAUDISH_RATE_WINDOW` seconds (default 60), answered with 429
+and a `Retry-After`. `CLAUDISH_MAX_QUEUE` (default 4) bounds how many requests
+may queue behind the inference lock, since inference is serialised and a burst
+would otherwise park threads waiting out the whole backlog.
 
 ### Requirements
 
 | | |
 |---|---|
-| Disk | ~710 MB of model cache (594 MB base model + 22 MB per adapter) |
-| Memory | ~850 MB resident per direction; ~1.6 GB if both stay loaded |
+| Disk | ~616 MB of model cache (594 MB base + 22 MB adapter) |
+| Memory | ~400 MB resident |
 | CPU | any x86-64 or arm64; no GPU needed |
-| Python | 3.8+ |
-
-The base model is not shared between the two directions, so holding both costs
-roughly twice one. On anything under ~2 GB free, run with `--max-loaded 1` and
-the idle direction is dropped and reloaded on demand:
-
-```bash
-python server.py --max-loaded 1
-```
-
-`llama-cpp-python` publishes no wheels, so on arm64 (a Raspberry Pi, say) pip
-compiles it from source — install `cmake` and a C++ toolchain first, and expect
-the build to take a while.
-
-## Docker
-
-```bash
-docker compose up -d --build
-```
-
-Then open <http://127.0.0.1:8787>. The first build compiles `llama-cpp-python`
-from source (there are no published wheels), so expect it to take a while; the
-compiler is left behind in the build stage and does not ship in the final image.
-The ~710 MB model cache lives on the `claudish-models` volume and survives
-rebuilds.
-
-The compose file pins the container to **2 CPUs and 2 GB**. That cap is not
-cosmetic: llama.cpp saturates every core it can see and ignores
-`OMP_NUM_THREADS`, so on a shared box the limit has to come from the container
-runtime. Two cores puts a translation at roughly 2-3 s while leaving the rest of
-the machine alone; remove the cap and it will use every core for about half a
-second instead.
-
-The port is bound to `127.0.0.1` so the service is not published on the LAN —
-put it behind Tailscale or a reverse proxy, or change the mapping to
-`"8787:8787"` if you want it reachable directly.
+| Python | 3.8+ (3.12 in the container) |
 
 ## Specs
 

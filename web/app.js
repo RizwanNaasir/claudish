@@ -1,4 +1,4 @@
-/* Claudish — translator console. */
+/* Claudish — decoder console. One direction: Claudish in, plain English out. */
 (function () {
   'use strict';
 
@@ -6,64 +6,23 @@
 
   var els = {
     src: $('src'), out: $('out'), run: $('run'), runText: $('runText'), runKey: $('runKey'),
-    copy: $('copy'), swap: $('swap'), count: $('count'), status: $('status'),
-    srcLabel: $('srcLabel'), outLabel: $('outLabel'),
-    paneIn: $('paneIn'), paneOut: $('paneOut'), samples: $('samples'), lex: $('lex')
+    copy: $('copy'), count: $('count'), status: $('status'),
+    samples: $('samples'), lex: $('lex'), terms: $('terms'), qnote: $('qnote')
   };
 
-  /* Sample inputs, all taken from the README and the two specs. */
-  var SAMPLES = {
-    'to-claudish': [
-      'Only owners can merge.',
-      'Do not launch until the tests pass.',
-      'The release can go out after Alice approves the final report.',
-      'The data is correct, but it is hard to read.'
-    ],
-    'to-english': [
-      'Merge authority is restricted to the owner role.',
-      'The honest shape is asymmetric: the data is correct; the format is hard to read. Correctness landed; legibility did not.',
-      'The timestamp provides verified evidence of cache staleness.',
-      'Here is where I would hold the line: do not launch until the tests pass. Green is the gate, not a suggestion.'
-    ]
-  };
+  /* Claudish inputs, taken from the README and the specs. */
+  var SAMPLES = [
+    'Merge authority is restricted to the owner role.',
+    'The honest shape is asymmetric: the data is correct; the format is hard to read. Correctness landed; legibility did not.',
+    'The timestamp provides verified evidence of cache staleness.',
+    'Here is where I would hold the line: do not launch until the tests pass. Green is the gate, not a suggestion.'
+  ];
 
-  var LABELS = {
-    'to-claudish': { from: 'Plain English', to: 'Claudish' },
-    'to-english':  { from: 'Claudish',      to: 'Plain English' }
-  };
-
-  var dir = 'to-english';   // landing on the decoder is the friendlier default
   var busy = false;
   var lastOutput = '';
 
-  /* ── direction ─────────────────────────────────────────── */
-  function applyDirection() {
-    var l = LABELS[dir];
-    els.srcLabel.textContent = l.from;
-    els.outLabel.textContent = l.to;
-
-    var inIsClaudish = dir === 'to-english';
-    els.srcLabel.className = 'tag ' + (inIsClaudish ? 'tag--cl' : 'tag--en');
-    els.outLabel.className = 'tag ' + (inIsClaudish ? 'tag--en' : 'tag--cl');
-    els.paneIn.classList.toggle('is-cl', inIsClaudish);
-
-    els.src.placeholder = inIsClaudish
-      ? 'Paste something suspiciously well-structured…'
-      : 'Type or paste a sentence…';
-
-    document.querySelectorAll('.switch__opt').forEach(function (b) {
-      var on = b.dataset.dir === dir;
-      b.classList.toggle('is-on', on);
-      b.setAttribute('aria-checked', String(on));
-    });
-
-    renderSamples();
-    clearOutput();
-  }
-
   function renderSamples() {
-    els.samples.innerHTML = '';
-    SAMPLES[dir].forEach(function (text) {
+    SAMPLES.forEach(function (text) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'chip';
@@ -80,35 +39,71 @@
 
   function clearOutput() {
     els.out.className = 'out';
-    els.out.innerHTML = '<p class="out__empty">The translation lands here.</p>';
+    els.out.innerHTML = '<p class="out__empty">The plain English lands here.</p>';
     els.copy.disabled = true;
+    els.terms.hidden = true;
+    els.terms.innerHTML = '';
+    els.qnote.hidden = true;
     lastOutput = '';
   }
 
-  /* ── output rendering ──────────────────────────────────── */
-  function renderOutput(text) {
+  /* ── output ────────────────────────────────────────────── */
+  function renderOutput(text, quality, source) {
     lastOutput = text;
-    var claudish = dir === 'to-claudish';
-    els.out.className = 'out ' + (claudish ? 'is-cl' : 'is-en');
+    els.out.className = 'out is-en';
 
     var paras = text.split(/\n{2,}/).filter(function (p) { return p.trim(); });
     if (!paras.length) paras = [text];
-
     els.out.innerHTML = paras.map(function (p, i) {
-      var body = claudish
-        ? window.CLAUDISH.annotate(p)
-        : window.CLAUDISH.escape(p);
       return '<p><span class="line" style="animation-delay:' + (i * 90) + 'ms">' +
-             body + '</span></p>';
+             window.CLAUDISH.escape(p) + '</span></p>';
     }).join('');
 
     els.copy.disabled = false;
+    renderTerms(source);
+    renderQuality(quality);
+  }
+
+  /* The glosses now hang off the Claudish that went in, since what comes out
+     is plain English and has nothing left to decode. */
+  function renderTerms(source) {
+    var found = window.CLAUDISH.loaded ? window.CLAUDISH.findTerms(source) : [];
+    if (!found.length) { els.terms.hidden = true; els.terms.innerHTML = ''; return; }
+
+    var label = document.createElement('span');
+    label.className = 'terms__label';
+    label.textContent = 'Terms in this passage';
+    els.terms.innerHTML = '';
+    els.terms.appendChild(label);
+
+    found.forEach(function (hit) {
+      var el = document.createElement('span');
+      el.className = 'tm';
+      el.tabIndex = 0;
+      el.dataset.plain = hit.entry.plain_english;
+      el.dataset.slug = hit.entry.slug;
+      el.textContent = hit.surface;
+      els.terms.appendChild(el);
+    });
+    els.terms.hidden = false;
+  }
+
+  /* Say so when the paraphrase looks lossy rather than presenting it as clean. */
+  function renderQuality(quality) {
+    if (!quality || !quality.issues || !quality.issues.length) {
+      els.qnote.hidden = true;
+      return;
+    }
+    els.qnote.textContent = 'Check this one: ' + quality.issues.join('; ') + '.';
+    els.qnote.hidden = false;
   }
 
   function renderError(msg) {
     els.out.className = 'out is-err';
     els.out.innerHTML = '<p>' + window.CLAUDISH.escape(msg) + '</p>';
     els.copy.disabled = true;
+    els.terms.hidden = true;
+    els.qnote.hidden = true;
     lastOutput = '';
   }
 
@@ -116,7 +111,7 @@
   function setBusy(on) {
     busy = on;
     els.run.disabled = on;
-    els.paneOut.classList.toggle('is-busy', on);
+    els.out.parentElement.classList.toggle('is-busy', on);
     els.runText.textContent = on ? 'Translating' : 'Translate';
   }
 
@@ -134,7 +129,7 @@
     fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ direction: dir, text: text })
+      body: JSON.stringify({ text: text })
     })
       .then(function (r) {
         return r.json().then(function (data) {
@@ -143,8 +138,10 @@
         });
       })
       .then(function (data) {
-        renderOutput(data.output);
-        setStatus('done in ' + ((Date.now() - t0) / 1000).toFixed(1) + 's', false);
+        renderOutput(data.output, data.quality, text);
+        var q = data.quality || {};
+        setStatus('done in ' + ((Date.now() - t0) / 1000).toFixed(1) + 's' +
+                  (q.candidates > 1 ? ' · ' + q.candidates + ' candidates' : ''), false);
       })
       .catch(function (err) {
         renderError(err.message || String(err));
@@ -161,16 +158,12 @@
     els.status.classList.toggle('is-warn', !!warn);
   }
 
-  /* ── model readiness ───────────────────────────────────── */
   function checkStatus() {
     fetch('/api/status')
       .then(function (r) { return r.json(); })
       .then(function (s) {
-        if (!s.ready) {
-          setStatus('first run downloads the model once · this takes a while', true);
-        } else {
-          setStatus('model cached · ready', false);
-        }
+        setStatus(s.ready ? 'model cached · ready'
+                          : 'first run downloads the model once · this takes a while', !s.ready);
       })
       .catch(function () { setStatus('backend unreachable', true); });
   }
@@ -229,21 +222,6 @@
       .catch(function () { flash(btn, 'Failed'); });
   }
 
-  document.querySelectorAll('.switch__opt').forEach(function (b) {
-    b.addEventListener('click', function () {
-      if (b.dataset.dir === dir) return;
-      dir = b.dataset.dir;
-      applyDirection();
-    });
-  });
-
-  els.swap.addEventListener('click', function () {
-    var carry = lastOutput;
-    dir = dir === 'to-claudish' ? 'to-english' : 'to-claudish';
-    applyDirection();
-    if (carry) { els.src.value = carry; updateCount(); }
-  });
-
   els.run.addEventListener('click', translate);
   els.copy.addEventListener('click', function () { copyText(lastOutput, els.copy); });
   els.src.addEventListener('input', updateCount);
@@ -259,7 +237,8 @@
 
   if (!/Mac|iPhone|iPad/.test(navigator.platform || '')) els.runKey.textContent = 'Ctrl↵';
 
-  applyDirection();
+  renderSamples();
+  clearOutput();
   updateCount();
   checkStatus();
 
@@ -269,7 +248,7 @@
       reglossStatic();
     })
     .catch(function (err) {
-      /* The translator still works; only the glossing degrades to compounds. */
+      /* The translator still works; only the glossing degrades. */
       console.warn('dictionary unavailable:', err);
       els.lex.innerHTML =
         '<p class="lex__err">The dictionary could not be loaded, so terms are ' +

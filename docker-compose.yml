@@ -13,7 +13,6 @@ services:
     environment:
       # Both directions resident (~1.6 GB). Set to 1 to halve that on a
       # memory-constrained host, at the cost of a ~1 s reload when switching.
-      CLAUDISH_MAX_LOADED: "2"
       CLAUDISH_N_CTX: "2048"
 
     volumes:

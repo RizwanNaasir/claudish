@@ -161,6 +161,27 @@
     return out;
   }
 
+  /* Unique dictionary entries appearing in a passage, in order of first use.
+     The output is plain English now, so the glosses belong on the Claudish
+     that went in rather than on what came out. */
+  function findTerms(text) {
+    var re = state.re;
+    if (!re) return [];
+    var hay = norm(text);
+    var seen = Object.create(null);
+    var out = [];
+    var m;
+    re.lastIndex = 0;
+    while ((m = re.exec(hay)) !== null) {
+      var entry = lookup(m[0]);
+      if (entry && !seen[entry.slug]) {
+        seen[entry.slug] = 1;
+        out.push({ entry: entry, surface: text.slice(m.index, m.index + m[0].length) });
+      }
+    }
+    return out;
+  }
+
   function load(url) {
     return fetch(url)
       .then(function (r) {
@@ -176,6 +197,7 @@
   global.CLAUDISH = {
     load: load,
     annotate: annotate,
+    findTerms: findTerms,
     lookup: lookup,
     escape: esc,
     compounds: COMPOUND,
